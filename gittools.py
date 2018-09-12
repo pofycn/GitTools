@@ -67,7 +67,7 @@ def deleteLocalBranch(branchName):
     checkoutBranch('master')
     execCmd = ['git', 'branch', '-D', branchName]
     print('准备删除本地分支...')
-    rreturnCode, stdout, stderr = executeCommand(execCmd)
+    returnCode, stdout, stderr = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '删除本地分支', stdout, stderr)
     return result
 
