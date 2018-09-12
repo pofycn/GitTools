@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+'Git tools base lib'
+
+__author__ = 'Jerry Chan'
+
 import subprocess
 import os
 
@@ -10,7 +15,6 @@ def checkGitRepoStatus():
     print('开始检查git工作区状态...')
     returnCode, stdout, stderr = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '获取git工作区状态', stdout, stderr)
-    print(stdout)
     return result
 
 
@@ -40,7 +44,6 @@ def checkLocalBranch():
     print('准备查看本地分支...')
     returnCode, stdout, stderr = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '查看本地分支', stdout, stderr)
-    print(stdout)
     return result
 
 
@@ -112,44 +115,45 @@ def fetchIndex():
 # 执行命令
 def executeCommand(execCmd):
     try:
-        print('-----------------command result start. ----------------')
-        # childProcess = subprocess.Popen(execCmd, shell=True)
         childProcess = subprocess.Popen(
             execCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # print('output string:', childProcess.stdout.read())
         stdout, stderr = childProcess.communicate()
         childProcess.wait()
-        print('-----------------command result end.   ----------------')
         returnCode = childProcess.returncode
         print('命令执行完成,exit with code:', returnCode)
         return returnCode, str(stdout, 'UTF-8'), str(stderr, 'UTF-8')
     finally:
-        childProcess.kill()
+        if childProcess.poll() != 0:
+            childProcess.kill()
 
 
 # 检查命令执行结果
 def checkExecutionResult(returnCode, message, stdout, stderr):
     if returnCode != 0:
         print(message, '--', '失败!\n')
-        print('结果')
+        print('结果:')
         print(stderr)
         return False
     else:
         print(message, '--', '成功!\n')
-        print('结果')
+        print('结果:')
         print(stdout)
         return True
 
 
-def main():
-    # if (checkGitRepoStatus()):
-    #     if (addAllChangesToStatge()):
-    #         commitChanges()
-    checkLocalBranch()
-    # createLocalBranch('dev')
-    # deleteLocalBranch('dev')
-    # executeCommand('')
+# def main():
+# if (checkGitRepoStatus()):
+#     if (addAllChangesToStatge()):
+#         commitChanges()
+# checkLocalBranch()
+# createLocalBranch('dev')
+# deleteLocalBranch('dev')
+# executeCommand('')
+
+
+def notify():
+    print('don\'t run gitbase directly~')
 
 
 if __name__ == '__main__':
-    main()
+    notify()
