@@ -36,15 +36,24 @@ def commitChanges():
 # 查看本地分支
 def checkLocalBranch():
     execCmd = ['bash', 'sh/checkLocalBranch.sh']
-    print('查看本地分支...')
+    print('准备查看本地分支...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '查看本地分支')
     return result
 
 
+# 切换分支
+def checkoutBranch(branchName):
+    execCmd = ['git', 'checkout', branchName]
+    print('准备切换分支...')
+    returnCode = executeCommand(execCmd)
+    result = checkExecutionResult(returnCode, '切换分支')
+    return result
+
+
 # 创建本地分支
 def createLocalBranch(branchName):
-    execCmd = 'git checkout -b ' + branchName
+    execCmd = ['git', 'checkout', '-b', branchName]
     print('准备创建本地分支...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '创建本地分支')
@@ -53,7 +62,8 @@ def createLocalBranch(branchName):
 
 # 删除本地分支
 def deleteLocalBranch(branchName):
-    execCmd = 'git checkout master && git branch -D ' + branchName
+    checkoutBranch('master')
+    execCmd = ['git', 'branch', '-D', branchName]
     print('准备删除本地分支...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '删除本地分支')
