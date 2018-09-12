@@ -7,7 +7,7 @@ import os
 def checkGitRepoStatus():
     print('获取当前目录:', os.path.abspath(os.path.dirname(__file__)))
     execCmd = 'git status'
-    print('开始检查git status...')
+    print('开始检查git工作区状态...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '获取git工作区状态')
     return result
@@ -18,7 +18,7 @@ def addAllChangesToStatge():
     execCmd = 'git add .'
     print('开始将更新后的文件添加到工作区...')
     returnCode = executeCommand(execCmd)
-    result = checkExecutionResult(returnCode, '添加至git仓库')
+    result = checkExecutionResult(returnCode, '将更新后的文件添加到工作区')
     return result
 
 
@@ -64,6 +64,33 @@ def createTag(tagName):
     print('准备创建Tag...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '创建Tag')
+    return result
+
+
+# 删除tag
+def deleteTag(tagName):
+    execCmd = 'git tag -d ' + tagName
+    print('准备删除Tag...')
+    returnCode = executeCommand(execCmd)
+    result = checkExecutionResult(returnCode, '删除Tag')
+    return result
+
+
+# 推送tag至远端
+def pushTag(tagName):
+    execCmd = 'git push origin ' + tagName
+    print('准备推送Tag至远端...')
+    returnCode = executeCommand(execCmd)
+    result = checkExecutionResult(returnCode, '推送Tag至远端')
+    return result
+
+
+# 更新远端索引
+def fetchIndex():
+    execCmd = 'git fetch'
+    print('准备更新远端索引...')
+    returnCode = executeCommand(execCmd)
+    result = checkExecutionResult(returnCode, '更新远端索引')
     return result
 
 
