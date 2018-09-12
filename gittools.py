@@ -6,7 +6,7 @@ import os
 # 查看工作区状态
 def checkGitRepoStatus():
     print('获取当前目录:', os.path.abspath(os.path.dirname(__file__)))
-    execCmd = 'git status'
+    execCmd = ['git', 'status']
     print('开始检查git工作区状态...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '获取git工作区状态')
@@ -15,7 +15,7 @@ def checkGitRepoStatus():
 
 # 将修改的文件添加到工作区
 def addAllChangesToStatge():
-    execCmd = 'git add .'
+    execCmd = ['git', 'add', '.']
     print('开始将更新后的文件添加到工作区...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '将更新后的文件添加到工作区')
@@ -24,7 +24,11 @@ def addAllChangesToStatge():
 
 # 提交更新
 def commitChanges():
-    execCmd = 'git commit -m "auto commit by gittools power by POFY"'
+    execCmd = [
+        'git', 'commit', '-m,', ''
+        "auto commit by gittools powered by POFY"
+        ''
+    ]
     print('准备提交更新至本地库...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '提交更新至本地库')
@@ -33,8 +37,8 @@ def commitChanges():
 
 # 查看本地分支
 def checkLocalBranch():
-    execCmd = 'git branch -a'
-    print('查看本地所有分支...')
+    execCmd = ['bash', 'sh/checkLocalBranch.sh']
+    print('查看本地分支...')
     returnCode = executeCommand(execCmd)
     result = checkExecutionResult(returnCode, '查看本地分支')
     return result
@@ -98,16 +102,23 @@ def fetchIndex():
 def executeCommand(execCmd):
     try:
         print('-----------------command result start. ----------------')
-        print(execCmd)
-        process = subprocess.Popen(execCmd, shell=True)
-        # process = subprocess.check_output(execCmd, shell=True)
-        process.wait()
+        # childProcess = subprocess.Popen(execCmd, shell=True)
+        childProcess = subprocess.Popen(
+            execCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # print('output string:', childProcess.stdout.read())
+        stdout, stderr = childProcess.communicate()
+        print('-----stdout-----')
+        print(stdout)
+        print('-----stdout-----\n')
+        print('-----stderr-----')
+        print(stderr)
+        print('-----stderr-----\n')
+        # childProcess.wait()
         print('-----------------command result end.   ----------------')
-        print('命令执行完成')
-        return process.returncode
+        print('命令执行完成,exit with code:', childProcess.returncode)
+        return childProcess.returncode
     finally:
-        if (process.poll() != 0):
-            process.kill()
+        childProcess.kill()
 
 
 # 检查命令执行结果
@@ -121,12 +132,13 @@ def checkExecutionResult(returnCode, message):
 
 
 def main():
-    if(checkGitRepoStatus()):
-        if(addAllChangesToStatge()):
+    if (checkGitRepoStatus()):
+        if (addAllChangesToStatge()):
             commitChanges()
-    checkLocalBranch()
+    # checkLocalBranch()
     # createLocalBranch('dev')
     # deleteLocalBranch('dev')
+    # executeCommand('')
 
 
 if __name__ == '__main__':
