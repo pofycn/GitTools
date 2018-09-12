@@ -36,7 +36,7 @@ def checkLocalBranch():
     execCmd = 'git branch -a'
     print('查看本地所有分支...')
     returnCode = executeCommand(execCmd)
-    result = checkExecutionResult(returnCode, '查看本地')
+    result = checkExecutionResult(returnCode, '查看本地分支')
     return result
 
 
@@ -69,13 +69,18 @@ def createTag(tagName):
 
 # 执行命令
 def executeCommand(execCmd):
-    print('-----------------command result start-----------------')
-    print(execCmd)
-    process = subprocess.Popen(execCmd, shell=True)
-    process.wait()
-    print('-----------------command result end-------------------')
-    print('命令执行完成')
-    return process.returncode
+    try:
+        print('-----------------command result start. ----------------')
+        print(execCmd)
+        process = subprocess.Popen(execCmd, shell=True)
+        # process = subprocess.check_output(execCmd, shell=True)
+        process.wait()
+        print('-----------------command result end.   ----------------')
+        print('命令执行完成')
+        return process.returncode
+    finally:
+        if (process.poll() != 0):
+            process.kill()
 
 
 # 检查命令执行结果
