@@ -25,9 +25,7 @@ def addAllChangesToStatge():
 # 提交更新
 def commitChanges():
     execCmd = [
-        'git', 'commit', '-m,', ''
-        "auto commit by gittools powered by POFY"
-        ''
+        'git', 'commit', '-m', '"auto commit by gittools powered by POFY"'
     ]
     print('准备提交更新至本地库...')
     returnCode = executeCommand(execCmd)
@@ -107,12 +105,12 @@ def executeCommand(execCmd):
             execCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # print('output string:', childProcess.stdout.read())
         stdout, stderr = childProcess.communicate()
-        print('-----stdout-----')
+        print('stdout begin-----')
         print(stdout)
-        print('-----stdout-----\n')
-        print('-----stderr-----')
+        print('stdout end  -----\n')
+        print('stderr begin-----')
         print(stderr)
-        print('-----stderr-----\n')
+        print('stderr end  -----\n')
         # childProcess.wait()
         print('-----------------command result end.   ----------------')
         print('命令执行完成,exit with code:', childProcess.returncode)
