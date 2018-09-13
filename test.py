@@ -2,13 +2,24 @@
 
 __author__ = 'Jerry Chan'
 
-import git_base
+import subprocess
 
 
 def main():
-    # cmd = ['cd', '..']
-    _, stdout, stderr = git_base.checkLocalBranch()
-    print(stdout)
+    cmd = ['ls', '-ah']
+    path = '/Users/pofy/Documents/tools'
+    # returnCode, stdout, stderr = command_tools.executeCommand(cmd)
+    childProcess = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path)
+
+    stdout, stderr = childProcess.communicate()
+    print('-----------stdout-----------')
+    print(str(stdout, 'UTF-8'))
+
+    print('\n-----------stderr-----------')
+    print(str(stderr, 'UTF-8'))
+
+    # print('\nreturn code:', returnCode)
 
 
 if __name__ == '__main__':
