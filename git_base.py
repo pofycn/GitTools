@@ -56,8 +56,8 @@ def checkLocalBranch(work_path):
 
 
 # 切换分支
-def checkoutBranch(branchName, work_path):
-    exec_cmd = ['git', 'checkout', branchName]
+def checkoutBranch(branch_name, work_path):
+    exec_cmd = ['git', 'checkout', branch_name]
     print('准备切换分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
@@ -67,8 +67,8 @@ def checkoutBranch(branchName, work_path):
 
 
 # 创建本地分支
-def createLocalBranch(branchName, work_path):
-    exec_cmd = ['git', 'checkout', '-b', branchName]
+def createLocalBranch(branch_name, work_path):
+    exec_cmd = ['git', 'checkout', '-b', branch_name]
     print('准备创建本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
@@ -78,9 +78,9 @@ def createLocalBranch(branchName, work_path):
 
 
 # 删除本地分支
-def deleteLocalBranch(branchName, work_path):
+def deleteLocalBranch(branch_name, work_path):
     checkoutBranch('master', work_path)
-    exec_cmd = ['git', 'branch', '-D', branchName]
+    exec_cmd = ['git', 'branch', '-D', branch_name]
     print('准备删除本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
@@ -90,9 +90,9 @@ def deleteLocalBranch(branchName, work_path):
 
 
 # 为master创建TAG
-def createTag(tagName, work_path):
+def createTag(tag_name, work_path):
     checkoutBranch('master', work_path)
-    exec_cmd = ['git', 'tag', tagName]
+    exec_cmd = ['git', 'tag', tag_name]
     print('准备创建Tag...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
@@ -102,8 +102,8 @@ def createTag(tagName, work_path):
 
 
 # 删除tag
-def deleteTag(tagName, work_path):
-    exec_cmd = ['git', 'tag', '-d', tagName]
+def deleteTag(tag_name, work_path):
+    exec_cmd = ['git', 'tag', '-d', tag_name]
     print('准备删除Tag...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
@@ -113,8 +113,8 @@ def deleteTag(tagName, work_path):
 
 
 # 推送tag至远端
-def pushTag(tagName, work_path):
-    exec_cmd = ['git', 'push', 'origin', tagName]
+def pushTag(tag_name, work_path):
+    exec_cmd = ['git', 'push', 'origin', tag_name]
     print('准备推送Tag至远端...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
