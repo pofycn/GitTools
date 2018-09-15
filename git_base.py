@@ -44,6 +44,17 @@ def commitChanges(work_path):
     return result
 
 
+# Push本地分支至远端
+def push_branch_to_remote(work_path, remote_name, remote_branch):
+    exec_cmd = ['git', 'push', remote_name, remote_branch]
+    print('准备提交更新至远端...')
+    returnCode, stdout, stderr = command_tools.execute_command(
+        exec_cmd, work_path)
+    result = command_tools.check_execution_result(returnCode, '提交更新至远端',
+                                                  stdout, stderr)
+    return result
+
+
 # 查看本地分支
 def checkLocalBranch(work_path):
     exec_cmd = ['bash', 'sh/checkLocalBranch.sh']
