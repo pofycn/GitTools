@@ -9,7 +9,7 @@ import command_tools
 
 
 # 查看工作区状态
-def checkGitRepoStatus(work_path):
+def check_git_repo_status(work_path):
     print('获取当前目录:', os.path.abspath(os.path.dirname(__file__)))
     exec_cmd = ['git', 'status']
     print('开始检查git工作区状态...')
@@ -21,7 +21,7 @@ def checkGitRepoStatus(work_path):
 
 
 # 将修改的文件添加到工作区
-def addAllChangesToStatge(work_path):
+def add_all_changes_to_statge(work_path):
     exec_cmd = ['git', 'add', '.']
     print('开始将更新后的文件添加到工作区...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -32,7 +32,7 @@ def addAllChangesToStatge(work_path):
 
 
 # 提交更新
-def commitChanges(work_path):
+def commit_changes(work_path):
     exec_cmd = [
         'git', 'commit', '-m', '"auto commit by gittools powered by POFY"'
     ]
@@ -56,7 +56,7 @@ def push_branch_to_remote(work_path, remote_name, remote_branch):
 
 
 # 查看本地分支
-def checkLocalBranch(work_path):
+def check_local_branch(work_path):
     exec_cmd = ['bash', 'sh/checkLocalBranch.sh']
     print('准备查看本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -67,7 +67,7 @@ def checkLocalBranch(work_path):
 
 
 # 切换分支
-def checkoutBranch(branch_name, work_path):
+def checkout_branch(branch_name, work_path):
     exec_cmd = ['git', 'checkout', branch_name]
     print('准备切换分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -78,7 +78,7 @@ def checkoutBranch(branch_name, work_path):
 
 
 # 创建本地分支
-def createLocalBranch(branch_name, work_path):
+def create_local_branch(branch_name, work_path):
     exec_cmd = ['git', 'checkout', '-b', branch_name]
     print('准备创建本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -89,8 +89,8 @@ def createLocalBranch(branch_name, work_path):
 
 
 # 删除本地分支
-def deleteLocalBranch(branch_name, work_path):
-    checkoutBranch('master', work_path)
+def delete_local_branch(branch_name, work_path):
+    checkout_branch('master', work_path)
     exec_cmd = ['git', 'branch', '-D', branch_name]
     print('准备删除本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -101,8 +101,8 @@ def deleteLocalBranch(branch_name, work_path):
 
 
 # 为master创建TAG
-def createTag(tag_name, work_path):
-    checkoutBranch('master', work_path)
+def create_tag(tag_name, work_path):
+    checkout_branch('master', work_path)
     exec_cmd = ['git', 'tag', tag_name]
     print('准备创建Tag...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -113,7 +113,7 @@ def createTag(tag_name, work_path):
 
 
 # 删除tag
-def deleteTag(tag_name, work_path):
+def delete_tag(tag_name, work_path):
     exec_cmd = ['git', 'tag', '-d', tag_name]
     print('准备删除Tag...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -124,7 +124,7 @@ def deleteTag(tag_name, work_path):
 
 
 # 推送tag至远端
-def pushTag(tag_name, work_path):
+def push_tag(tag_name, work_path):
     exec_cmd = ['git', 'push', 'origin', tag_name]
     print('准备推送Tag至远端...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -135,7 +135,7 @@ def pushTag(tag_name, work_path):
 
 
 # 更新远端索引
-def fetchIndex(work_path):
+def fetch_index(work_path):
     exec_cmd = ['git', 'fetch']
     print('准备更新远端索引...')
     returnCode, stdout, stderr = command_tools.execute_command(

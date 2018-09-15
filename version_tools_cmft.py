@@ -27,7 +27,7 @@ def create_next_week_branch(current_week_branch, work_path):
             next_version_date.format('YYYYMMDD'))
         print('下期版本分支:', next_version_branch)
         print('创建下期分支')
-        git_base.createLocalBranch(next_version_branch, work_path)
+        git_base.create_local_branch(next_version_branch, work_path)
         # 推送分支到远端(需要检查远端是否限制Push权限))
         # git_base.push_branch_to_remote(work_path, 'origin',
         #                                next_version_branch)
