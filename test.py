@@ -3,24 +3,27 @@
 __author__ = 'Jerry Chan'
 
 import subprocess
+import re
+import git_base
 
 
 def main():
-    cmd = ['ls', '-ah']
-    path = '/Users/pofy/Documents/tools'
-    # returnCode, stdout, stderr = command_tools.executeCommand(cmd)
-    childProcess = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path)
-
-    stdout, stderr = childProcess.communicate()
+    result,stdout,stderr=git_base.check_local_branch('/Users/pofy/Documents/projects_py/GitTools')
     print('-----------stdout-----------')
-    print(str(stdout, 'UTF-8'))
+    print(stdout)
 
     print('\n-----------stderr-----------')
-    print(str(stderr, 'UTF-8'))
+    print(stderr)
+
+    print('\n-----------branch-----------')
+    get_current_branch(stdout)
 
     # print('\nreturn code:', returnCode)
 
-
+def get_current_branch(stdout):
+    print('当前分支:')
+    start_index=stdout.find('*')
+    end_index=stdout.find('\n')
+    print(stdout[start_index+2:end_index])
 if __name__ == '__main__':
     main()

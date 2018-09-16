@@ -17,7 +17,7 @@ def check_git_repo_status(work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '获取git工作区状态',
                                                   stdout, stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 将修改的文件添加到工作区
@@ -28,7 +28,7 @@ def add_all_changes_to_statge(work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '将更新后的文件添加到工作区',
                                                   stdout, stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 提交更新
@@ -41,7 +41,7 @@ def commit_changes(work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '提交更新至本地库',
                                                   stdout, stderr)
-    return result
+    return result, stdout, stderr
 
 
 # Push本地分支至远端
@@ -52,18 +52,18 @@ def push_branch_to_remote(work_path, remote_name, remote_branch):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '提交更新至远端',
                                                   stdout, stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 查看本地分支
 def check_local_branch(work_path):
-    exec_cmd = ['bash', 'sh/checkLocalBranch.sh']
+    exec_cmd = ['git', 'branch', '-a']
     print('准备查看本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '查看本地分支', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 切换分支
@@ -74,7 +74,7 @@ def checkout_branch(branch_name, work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '切换分支', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 创建本地分支
@@ -85,7 +85,7 @@ def create_local_branch(branch_name, work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '创建本地分支', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 删除本地分支
@@ -97,7 +97,7 @@ def delete_local_branch(branch_name, work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '删除本地分支', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 为master创建TAG
@@ -109,7 +109,7 @@ def create_tag(tag_name, work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '创建Tag', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 删除tag
@@ -120,7 +120,7 @@ def delete_tag(tag_name, work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '删除Tag', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 推送tag至远端
@@ -131,7 +131,7 @@ def push_tag(tag_name, work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '推送Tag至远端',
                                                   stdout, stderr)
-    return result
+    return result, stdout, stderr
 
 
 # 更新远端索引
@@ -142,7 +142,7 @@ def fetch_index(work_path):
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '更新远端索引', stdout,
                                                   stderr)
-    return result
+    return result, stdout, stderr
 
 
 # def main():
