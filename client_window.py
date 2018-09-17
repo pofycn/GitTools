@@ -8,11 +8,26 @@ import arrow
 import tkinter.filedialog
 import git_base
 import log_utils
+import version_tools_cmft
+
+logger = log_utils.get_logger()
 
 
 # 一键创建下周分支
 def auto_create_branch(event):
-    print('hello')
+    log_utils.clear_log_content()
+    # 获取当前分支
+    current_branch = current_branch_label.cget('text')
+    # 获取当前工作路径
+    current_work_path = work_path_label.cget('text')
+    # 创建下周分支
+    version_tools_cmft.create_next_week_branch(current_branch,
+                                               current_work_path)
+
+    logs_content = log_utils.read_logs()
+    # 清空text_area信息
+    text_area.delete(0.0, END)
+    text_area.insert(1.0, logs_content)
 
 
 # 选择项目文件目录
@@ -20,11 +35,11 @@ def choose_project_path(event):
     log_utils.clear_log_content()
     path = tkinter.filedialog.askdirectory()
     if path != '':
-        print('工作目录为:', path)
+        logger.info('工作目录为:' + path)
         work_path_label.config(text=path)
         result, stdout, stderr = git_base.check_local_branch(path)
         logs_content = log_utils.read_logs()
-        text_area.insert(1.0,logs_content)
+        text_area.insert(1.0, logs_content)
         current_branch_label.config(text=get_current_branch(stdout))
     else:
         work_path_label.config(text="您没有选择任何目录")
@@ -35,9 +50,9 @@ def get_current_branch(stdout):
     if (stdout != ''):
         start_index = stdout.find('*')
         end_index = stdout.find('\n')
-        print('当前分支：', stdout[start_index + 2:end_index])
+        logger.info('当前分支：' + stdout[start_index + 2:end_index])
     else:
-        print('stdout为空！')
+        logger.info('stdout为空！')
     return stdout[start_index + 2:end_index]
 
 
@@ -48,7 +63,7 @@ root.resizable(False, False)
 
 Label(root, text='当前时间:').grid(row=0, column=0, padx=5, pady=5)
 Label(
-    root, text=arrow.now().format('YYYY-MM-DD/HH:MM:SS')).grid(
+    root, text=arrow.now().format('YYYY-MM-DD(ddd)/HH:MM')).grid(
         row=0, column=1, padx=5, pady=5, sticky=W)
 
 Label(root, text='工程目录:').grid(row=1, column=0, padx=5, pady=5)
@@ -79,9 +94,9 @@ b1 = Button(root, text="一键创建下周分支", width=20)
 b1.bind('<Button-1>', auto_create_branch)
 b1.grid(row=4, column=1, padx=5, pady=5, columnspan=2, sticky=W)
 
-Label(root, text='结果:').grid(row=5, column=0, columnspan=3,sticky=W)
+Label(root, text='结果:').grid(row=5, column=0, columnspan=3, sticky=W)
 work_path_label.grid(row=1, column=1, padx=5, pady=5, sticky=W)
 
-text_area = Text(root,background='grey')
+text_area = Text(root, background='grey')
 text_area.grid(row=6, column=0, columnspan=3)
 root.mainloop()

@@ -6,23 +6,16 @@ import subprocess
 import re
 import git_base
 import log_utils
+import arrow
 
 
 def main():
-    log_utils.clear_log_content()
-    result, stdout, stderr = git_base.check_local_branch(
-        '/Users/pofy/Documents/projects_py/GitTools')
-
-    # logger.info('\n-----------stdout-----------')
-    # logger.info('\n' + stdout)
-
-    # logger.info('\n-----------stderr-----------')
-    # logger.info('\n' + stderr)
-
-    # logger.info('\n-----------branch-----------')
-
-    # print(log_utils.read_logs())
-    # print('\nreturn code:', returnCode)
+    # log_utils.clear_log_content()
+    # result, stdout, stderr = git_base.check_local_branch(
+    #     '/Users/pofy/Documents/projects_py/GitTools')
+    arw = arrow.utcnow()
+    next_arw=arw.shift(weekday=3).format('YYYYMMDD')
+    print(next_arw)
 
 
 def get_current_branch(stdout):
