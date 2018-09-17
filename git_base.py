@@ -6,11 +6,13 @@ __author__ = 'Jerry Chan'
 
 import os
 import command_tools
+import log_utils
+
 
 
 # 查看工作区状态
 def check_git_repo_status(work_path):
-    print('获取当前目录:', os.path.abspath(os.path.dirname(__file__)))
+    print('获取当前目录:' , os.path.abspath(os.path.dirname(__file__)))
     exec_cmd = ['git', 'status']
     print('开始检查git工作区状态...')
     returnCode, stdout, stderr = command_tools.execute_command(
@@ -57,8 +59,9 @@ def push_branch_to_remote(work_path, remote_name, remote_branch):
 
 # 查看本地分支
 def check_local_branch(work_path):
+    logger = log_utils.get_logger()
     exec_cmd = ['git', 'branch', '-a']
-    print('准备查看本地分支...')
+    logger.info('准备查看本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
     result = command_tools.check_execution_result(returnCode, '查看本地分支', stdout,
