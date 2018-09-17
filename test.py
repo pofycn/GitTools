@@ -9,7 +9,7 @@ import log_utils
 
 
 def main():
-    log_utils.clear_log_content()
+    # log_utils.clear_log_content()
     result, stdout, stderr = git_base.check_local_branch(
         '/Users/pofy/Documents/projects_py/GitTools')
 

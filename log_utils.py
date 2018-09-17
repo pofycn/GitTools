@@ -5,13 +5,10 @@ __author__ = 'Jerry Chan'
 import logging
 import os
 
-LOG_PATH = 'logs/GitTools.log'
-GIT_TOOLS_LOGGER = 'GitTools_log'
-
 
 # 清空日志
 def clear_log_content():
-    os.remove(LOG_PATH)
+    os.remove('logs/GitTools.log')
 
 
 # 获取Logger
@@ -22,7 +19,7 @@ def get_logger():
 # 读取当前日志信息
 def read_logs():
     try:
-        file = open(LOG_PATH, 'r')
+        file = open('logs/GitTools.log', 'r')
         stdout = file.read()
         return stdout
     except Exception as e:
@@ -32,9 +29,9 @@ def read_logs():
             file.close()
 
 
-logger = logging.getLogger(GIT_TOOLS_LOGGER)
+logger = logging.getLogger('GitTools_log')
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler(LOG_PATH)
+fh = logging.FileHandler('logs/GitTools.log')
 fh.setLevel(logging.INFO)
 
 sh = logging.StreamHandler()
