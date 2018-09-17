@@ -6,9 +6,12 @@ import logging
 import os
 
 
-# 清空日志
+# 清空日志内容记录
 def clear_log_content():
-    os.remove('logs/GitTools.log')
+    with open('logs/GitTools.log', "r+") as file:
+        read_data = file.read()
+        file.seek(0)
+        file.truncate()
 
 
 # 获取Logger
@@ -38,7 +41,8 @@ sh = logging.StreamHandler()
 sh.setLevel(logging.INFO)
 
 # set formatter
-formatter = logging.Formatter('%(asctime)s:%(message)s')
+# formatter = logging.Formatter('%(asctime)s:%(message)s')
+formatter = logging.Formatter('%(message)s')
 fh.setFormatter(formatter)
 sh.setFormatter(formatter)
 

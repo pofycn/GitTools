@@ -31,12 +31,12 @@ def execute_command(exec_cmd, work_path):
 # 检查命令执行结果
 def check_execution_result(return_code, message, stdout, stderr):
     if return_code != 0:
-        logger.info(message + '--' + '失败!')
+        logger.info(message + '：' + '失败!')
         logger.info('结果:')
         logger.info('\n'+stderr)
         return False
     else:
-        logger.info(message + '--' + '成功!')
+        logger.info(message + '：' + '成功!')
         logger.info('结果:')
         logger.info('\n'+stdout)
         return True

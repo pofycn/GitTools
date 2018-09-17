@@ -7,6 +7,7 @@ import tkinter.messagebox
 import arrow
 import tkinter.filedialog
 import git_base
+import log_utils
 
 
 # 一键创建下周分支
@@ -16,12 +17,14 @@ def auto_create_branch(event):
 
 # 选择项目文件目录
 def choose_project_path(event):
+    log_utils.clear_log_content()
     path = tkinter.filedialog.askdirectory()
     if path != '':
         print('工作目录为:', path)
         work_path_label.config(text=path)
         result, stdout, stderr = git_base.check_local_branch(path)
-        text_area.insert(1.0,stdout)
+        logs_content = log_utils.read_logs()
+        text_area.insert(1.0,logs_content)
         current_branch_label.config(text=get_current_branch(stdout))
     else:
         work_path_label.config(text="您没有选择任何目录")
