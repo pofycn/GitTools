@@ -22,7 +22,7 @@ def execute_command(exec_cmd, work_path):
         logger.info('命令执行完成,exit with code:' + str(returnCode))
         return returnCode, str(stdout, 'UTF-8'), str(stderr, 'UTF-8')
     except Exception as e:
-        print('执行命令过程出现异常\n', e)
+        logger.info('执行命令过程出现异常:\n'+ e)
     finally:
         if childProcess.poll() != 0:
             childProcess.kill()
@@ -33,12 +33,12 @@ def check_execution_result(return_code, message, stdout, stderr):
     if return_code != 0:
         logger.info(message + '：' + '失败!')
         logger.info('结果:')
-        logger.info('\n'+stderr)
+        logger.info('\n' + stderr)
         return False
     else:
         logger.info(message + '：' + '成功!')
         logger.info('结果:')
-        logger.info('\n'+stdout)
+        logger.info('\n' + stdout)
         return True
 
 

@@ -33,6 +33,7 @@ def auto_create_branch(event):
 # 选择项目文件目录
 def choose_project_path(event):
     log_utils.clear_log_content()
+    text_area.delete(0.0, END)
     path = tkinter.filedialog.askdirectory()
     if path != '':
         logger.info('工作目录为:' + path)
