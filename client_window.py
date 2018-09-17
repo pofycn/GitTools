@@ -50,7 +50,7 @@ def choose_project_path(event):
 def get_current_branch(stdout):
     if (stdout != ''):
         start_index = stdout.find('*')
-        end_index = stdout.find('\n')
+        end_index = stdout.find('\n', start_index)
         logger.info('当前分支：' + stdout[start_index + 2:end_index])
     else:
         logger.info('stdout为空！')
