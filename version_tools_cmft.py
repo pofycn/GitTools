@@ -7,9 +7,15 @@ import git_base
 import log_utils
 import re
 
+RELEASE_PREFIX = 'release_'
+DEV_PREFIX = 'dev_'
+LOCAL_DEVBRANCH_PREFIX = 'dev'
+LOCAL_RELEASEBRANCH_PREFIX = 'release'
+REMOTE_DEVBRANCH_PREFIX = 'remotes/origin/dev'
+REMOTE_RELEASEBRANCH_PREFIX = 'remotes/origin/release'
+REMOTE_ORIGIN_PREFIX = 'remotes/origin/'
+EMPTY = 'EMPTY'
 logger = log_utils.get_logger()
-release_prefix = 'release_'
-dev_prefix = 'dev_'
 
 
 # main test function
@@ -30,10 +36,10 @@ def create_next_week_branch(current_week_branch, work_path):
         logger.info('下期版本日期:' + next_version_date)
 
         # next dev branch name
-        next_dev_branch = dev_prefix + next_version_date
+        next_dev_branch = DEV_PREFIX + next_version_date
 
         # next release branch name
-        next_release_branch = release_prefix + next_version_date
+        next_release_branch = RELEASE_PREFIX + next_version_date
         logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
 
         # create branch
@@ -74,31 +80,85 @@ def check_branch_exist(branch_name, stdout):
         return False
 
 
-# 获取最新分支  dev & release branch
+# 获取最新分支  local & remote --- dev & release branch
 def get_lastest_branch(stdout):
     try:
         str_array = stdout.split('\n')
         result_array = []
+        local_dev_array = []
+        local_release_array = []
         # 远端分支list
-        remote_array = []
+        remote_dev_array = []
+        remote_release_array = []
         for str in str_array:
-            if (str != ''):
-                result_array.append(str)
             # 字符串去空处理
             str_nospace = re.sub('\s', '', str)
-            if (str_nospace.startswith('remotes/origin/dev')
-                    or str_nospace.startswith('remotes/origin/release')):
-                remote_array.append(str_nospace)
-        result_array.sort()
-        print('============result array====================')
-        print('result array:', result_array)
-        print('============remote branch===================')
-        print('remote branch array:', remote_array)
+
+            if (str_nospace.find('*') != -1):
+                str_nospace = str_nospace.replace('*', '')
+
+            if (str_nospace.startswith(LOCAL_DEVBRANCH_PREFIX)):
+                local_dev_array.append(str_nospace)
+
+            if (str_nospace.startswith(LOCAL_RELEASEBRANCH_PREFIX)):
+                local_release_array.append(str_nospace)
+
+            if (str_nospace.startswith(REMOTE_DEVBRANCH_PREFIX)):
+                remote_dev_array.append(
+                    str_nospace.split(REMOTE_ORIGIN_PREFIX)[1])
+
+            if (str_nospace.startswith(REMOTE_RELEASEBRANCH_PREFIX)):
+                remote_release_array.append(
+                    str_nospace.split(REMOTE_ORIGIN_PREFIX)[1])
+
+        # print('============local dev branch================')
+        local_dev_array.sort()
+        # print('local dev branch array:', local_dev_array)
+
+        # print('============local dev branch================')
+        local_release_array.sort()
+        # print('local release branch array:', local_release_array)
+
+        # print('============remote dev branch===============')
+        remote_dev_array.sort()
+        # print('remote dev branch array:', remote_dev_array)
+
+        # print('============remote release branch===========')
+        remote_release_array.sort()
+        # print('remote dev branch array:', remote_release_array)
+
         print('============branch count====================')
-        print('branch counts:', len(result_array))
-        return 0
+        counts_local_dev = len(local_dev_array)
+        if (counts_local_dev == 0):
+            counts_local_dev = counts_local_dev + 1
+            local_dev_array.append(EMPTY)
+
+        counts_local_release = len(local_release_array)
+        if (counts_local_release == 0):
+            counts_local_release += 1
+            local_release_array.append(EMPTY)
+
+        counts_remote_dev = len(remote_dev_array)
+        if (counts_remote_dev == 0):
+            counts_remote_dev += 1
+            remote_dev_array.append(EMPTY)
+
+        counts_remote_release = len(remote_release_array)
+        if (counts_remote_release == 0):
+            counts_remote_release += 1
+            remote_release_array.append(EMPTY)
+
+        # print('local dev branch counts:', counts_local_dev)
+        # print('local release branch counts:', counts_local_release)
+
+        # print('remote dev branch counts:', counts_remote_dev)
+        # print('remote release branch counts:', counts_remote_release)
+        return local_dev_array[counts_local_dev - 1], local_release_array[
+            counts_local_release -
+            1], remote_dev_array[counts_remote_dev - 1], remote_release_array[
+                counts_remote_release - 1]
     except Exception as e:
-        print('get lastest branch error')
+        logger.info('查看最新版本分支错误')
         return -1
 
 
