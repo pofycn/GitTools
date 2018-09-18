@@ -23,6 +23,7 @@ def main():
         '/Users/pofy/Documents/projects/shop-app')
     print('=========================测试=========================')
     print(cmft_tools.check_branch_exist('master', stdout))
+    print(cmft_tools.get_lastest_branch(stdout))
 
 
 if __name__ == '__main__':

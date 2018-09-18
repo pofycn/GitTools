@@ -35,6 +35,8 @@ def create_next_week_branch(current_week_branch, work_path):
         # next release branch name
         next_release_branch = release_prefix + next_version_date
         logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
+
+        # create branch
         logger.info('开始创建下期分支.')
         git_base.create_local_branch(next_dev_branch, work_path)
         git_base.create_local_branch(next_release_branch, work_path)
@@ -70,6 +72,34 @@ def check_branch_exist(branch_name, stdout):
     except Exception as e:
         print('分支不存在，可以进行创建', e)
         return False
+
+
+# 获取最新分支  dev & release branch
+def get_lastest_branch(stdout):
+    try:
+        str_array = stdout.split('\n')
+        result_array = []
+        # 远端分支list
+        remote_array = []
+        for str in str_array:
+            if (str != ''):
+                result_array.append(str)
+            # 字符串去空处理
+            str_nospace = re.sub('\s', '', str)
+            if (str_nospace.startswith('remotes/origin/dev')
+                    or str_nospace.startswith('remotes/origin/release')):
+                remote_array.append(str_nospace)
+        result_array.sort()
+        print('============result array====================')
+        print('result array:', result_array)
+        print('============remote branch===================')
+        print('remote branch array:', remote_array)
+        print('============branch count====================')
+        print('branch counts:', len(result_array))
+        return 0
+    except Exception as e:
+        print('get lastest branch error')
+        return -1
 
 
 if __name__ == '__main__':
