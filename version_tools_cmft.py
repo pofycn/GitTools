@@ -35,11 +35,25 @@ def create_next_week_branch(current_week_branch, work_path):
         next_version_date = arrow.utcnow().shift(weekday=3).format('YYYYMMDD')
         logger.info('下期版本日期:' + next_version_date)
 
+        _, stdout, _ = git_base.check_local_branch(work_path)
+        # get lastest branch
+        dev_local, release_local, dev_remote, release_remote = get_lastest_branch(
+            stdout)
+
+        logger.info('最新本地及远端分支:' + dev_local + ',' + release_local + ',' +
+                    dev_remote + ',' + release_remote)
         # next dev branch name
         next_dev_branch = DEV_PREFIX + next_version_date
+        if (next_dev_branch == dev_local or next_dev_branch == dev_remote):
+            logger.info('下周dev分支已经存在，无需创建，请按需检出对应分支')
+            return
 
         # next release branch name
         next_release_branch = RELEASE_PREFIX + next_version_date
+        if (next_release_branch == release_local
+                or next_release_branch == release_remote):
+            logger.info('下周dev分支已经存在，无需创建，请按需检出对应分支')
+            return
         logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
 
         # create branch
