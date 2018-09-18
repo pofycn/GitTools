@@ -5,6 +5,7 @@ __author__ = 'Jerry Chan'
 import arrow
 import git_base
 import log_utils
+import re
 
 logger = log_utils.get_logger()
 release_prefix = 'release_'
@@ -42,6 +43,33 @@ def create_next_week_branch(current_week_branch, work_path):
         #                                next_version_branch)
     except Exception as e:
         logger.info('创建下周分支过程出错' + e)
+
+
+# 根据stdout获取当前分支
+def get_current_branch(stdout):
+    if (stdout != ''):
+        start_index = stdout.find('*')
+        end_index = stdout.find('\n', start_index)
+        logger.info('当前分支：' + stdout[start_index + 2:end_index])
+    else:
+        logger.info('stdout为空！')
+    return stdout[start_index + 2:end_index]
+
+
+# 检查分支是否存在
+def check_branch_exist(branch_name, stdout):
+    try:
+        str_array = stdout.split('\n')
+        result_str = ''
+        for str in str_array:
+            if (str != ''):
+                result_str = result_str + re.sub('\s', '', str) + ','
+        print('分支已存在，请检出')
+        index = result_str.index(branch_name)
+        return True
+    except Exception as e:
+        print('分支不存在，可以进行创建', e)
+        return False
 
 
 if __name__ == '__main__':

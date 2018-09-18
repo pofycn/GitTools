@@ -8,7 +8,7 @@ import arrow
 import tkinter.filedialog
 import git_base
 import log_utils
-import version_tools_cmft
+import version_tools_cmft as cmft_tools
 
 logger = log_utils.get_logger()
 
@@ -21,7 +21,7 @@ def auto_create_branch(event):
     # 获取当前工作路径
     current_work_path = work_path_label.cget('text')
     # 创建下周分支
-    version_tools_cmft.create_next_week_branch(current_branch,
+    cmft_tools.create_next_week_branch(current_branch,
                                                current_work_path)
 
     logs_content = log_utils.read_logs()
@@ -41,20 +41,11 @@ def choose_project_path(event):
         result, stdout, stderr = git_base.check_local_branch(path)
         logs_content = log_utils.read_logs()
         text_area.insert(1.0, logs_content)
-        current_branch_label.config(text=get_current_branch(stdout))
+        current_branch_label.config(text=cmft_tools.get_current_branch(stdout))
     else:
         work_path_label.config(text="您没有选择任何目录")
 
 
-# 根据stdout获取当前分支
-def get_current_branch(stdout):
-    if (stdout != ''):
-        start_index = stdout.find('*')
-        end_index = stdout.find('\n', start_index)
-        logger.info('当前分支：' + stdout[start_index + 2:end_index])
-    else:
-        logger.info('stdout为空！')
-    return stdout[start_index + 2:end_index]
 
 
 # 创建窗口程序

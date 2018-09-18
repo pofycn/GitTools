@@ -7,22 +7,22 @@ import re
 import git_base
 import log_utils
 import arrow
+import version_tools_cmft as cmft_tools
 
 
 def main():
     # log_utils.clear_log_content()
     # result, stdout, stderr = git_base.check_local_branch(
     #     '/Users/pofy/Documents/projects_py/GitTools')
-    arw = arrow.utcnow()
-    next_arw=arw.shift(weekday=3).format('YYYYMMDD')
-    print(next_arw)
 
+    # arw = arrow.utcnow()
+    # next_arw=arw.shift(weekday=3).format('YYYYMMDD')
+    # print(next_arw)
 
-def get_current_branch(stdout):
-    print('当前分支:')
-    start_index = stdout.find('*')
-    end_index = stdout.find('\n')
-    print(stdout[start_index + 2:end_index])
+    result, stdout, stderr = git_base.check_local_branch(
+        '/Users/pofy/Documents/projects/shop-app')
+    print('=========================测试=========================')
+    print(cmft_tools.check_branch_exist('master', stdout))
 
 
 if __name__ == '__main__':
