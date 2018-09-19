@@ -67,7 +67,7 @@ def create_next_week_branch(current_week_branch, work_path):
                 next_dev_branch, REMOTE_ORIGIN + dev_remote, work_path)
         else:
             # 以默认分支创建下周分支
-            logger.info('默认以当前分支创建下周分支' + current_branch_name)
+            logger.info('默认以当前分支创建下周分支，当前分支:' + current_branch_name)
             git_base.create_local_branch(next_dev_branch, work_path)
 
         # create release branch
@@ -77,7 +77,7 @@ def create_next_week_branch(current_week_branch, work_path):
                 next_release_branch, REMOTE_ORIGIN + dev_remote, work_path)
         else:
             # 以默认分支创建下周分支
-            logger.info('默认以当前分支创建下周分支:' + current_branch_name)
+            logger.info('默认以当前分支创建下周分支，当前分支:' + current_branch_name)
             git_base.create_local_branch(next_release_branch, work_path)
 
         # 推送分支到远端(需要检查远端是否限制Push权限))

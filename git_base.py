@@ -88,19 +88,21 @@ def create_local_branch(branch_name, work_path):
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
     result = command_tools.check_execution_result(
-        returnCode, '创建本地分支:' + branch_name, stdout, stderr)
+        returnCode, '创建本地分支:' + branch_name, '创建' + branch_name + '成功！',
+        stderr)
     return result, stdout, stderr
 
 
 # 从远端检出分支
 def checkout_branch_from_remote(local_branch_name, remote_branch_name,
-                              work_path):
+                                work_path):
     exec_cmd = ['git', 'checkout', '-b', local_branch_name, remote_branch_name]
     logger.info('准备创建本地分支...')
     returnCode, stdout, stderr = command_tools.execute_command(
         exec_cmd, work_path)
     result = command_tools.check_execution_result(
-        returnCode, '从远端检出分支:' + local_branch_name, stdout, stderr)
+        returnCode, '从远端检出分支:' + local_branch_name,
+        '创建' + local_branch_name + '成功！', stderr)
     return result, stdout, stderr
 
 
