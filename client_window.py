@@ -21,13 +21,14 @@ def auto_create_branch(event):
     # 获取当前工作路径
     current_work_path = work_path_label.cget('text')
     # 创建下周分支
-    cmft_tools.create_next_week_branch(current_branch,
-                                               current_work_path)
+    cmft_tools.create_next_week_branch(current_branch, current_work_path)
 
     logs_content = log_utils.read_logs()
     # 清空text_area信息
     text_area.delete(0.0, END)
     text_area.insert(1.0, logs_content)
+    # 清空日志信息
+    log_utils.clear_log_content()
 
 
 # 选择项目文件目录
@@ -44,8 +45,6 @@ def choose_project_path(event):
         current_branch_label.config(text=cmft_tools.get_current_branch(stdout))
     else:
         work_path_label.config(text="您没有选择任何目录")
-
-
 
 
 # 创建窗口程序

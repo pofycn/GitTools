@@ -11,7 +11,7 @@
 3. 完成
 
 ## 注意事项
-此工具主要提供给项目管理员master使用，使用前请保证对应的分支有push权限，否则分支在本地创建后不能正常的Push到远端
+此工具主要提供给项目管理员master使用，使用前请保证对应的分支有push权限，否则分支在本地创建后不能正常的Push到远端，后续会考虑增加模拟登陆来实现对分支权限的控制
 
 ## 程序打包
-pyinstaller client_window.py -p command_tools.py -p command_tools.py -p command_tools.py -p git_base.py -p log_utils.py -p version_tools_cmft.py
+pyinstaller -F client_window.py -p command_tools.py -p git_base.py -p log_utils.py -p version_tools_cmft.py -p logs/GitTools.log --noconsole

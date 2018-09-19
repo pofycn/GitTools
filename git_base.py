@@ -92,6 +92,18 @@ def create_local_branch(branch_name, work_path):
     return result, stdout, stderr
 
 
+# 从远端检出分支
+def checkout_branch_from_remote(local_branch_name, remote_branch_name,
+                              work_path):
+    exec_cmd = ['git', 'checkout', '-b', local_branch_name, remote_branch_name]
+    logger.info('准备创建本地分支...')
+    returnCode, stdout, stderr = command_tools.execute_command(
+        exec_cmd, work_path)
+    result = command_tools.check_execution_result(
+        returnCode, '从远端检出分支:' + local_branch_name, stdout, stderr)
+    return result, stdout, stderr
+
+
 # 删除本地分支
 def delete_local_branch(branch_name, work_path):
     checkout_branch('master', work_path)
