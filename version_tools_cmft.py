@@ -53,7 +53,7 @@ def create_next_week_branch(current_week_branch, work_path):
         next_release_branch = RELEASE_PREFIX + next_version_date
         if (next_release_branch == release_local
                 or next_release_branch == release_remote):
-            logger.info('下周dev分支已经存在，无需创建，请按需检出对应分支')
+            logger.info('下周release分支已经存在，无需创建，请按需检出对应分支')
             return
         logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
 
@@ -61,7 +61,7 @@ def create_next_week_branch(current_week_branch, work_path):
         current_branch_name = get_current_branch(all_branch_info)
 
         # create dev branch
-        logger.info('开始创建下周dev分支.')
+        logger.info('\n开始创建下周dev分支.')
         if (dev_remote != EMPTY):
             git_base.checkout_branch_from_remote(
                 next_dev_branch, REMOTE_ORIGIN + dev_remote, work_path)
@@ -71,7 +71,7 @@ def create_next_week_branch(current_week_branch, work_path):
             git_base.create_local_branch(next_dev_branch, work_path)
 
         # create release branch
-        logger.info('开始创建下周release分支.')
+        logger.info('\n开始创建下周release分支.')
         if (release_remote != EMPTY):
             git_base.checkout_branch_from_remote(
                 next_release_branch, REMOTE_ORIGIN + dev_remote, work_path)
