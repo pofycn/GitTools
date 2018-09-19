@@ -57,44 +57,29 @@ def create_next_week_branch(current_week_branch, work_path):
             return
         logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
 
+        _, all_branch_info, _ = git_base.check_local_branch(work_path)
+        current_branch_name = get_current_branch(all_branch_info)
+
         # create dev branch
         logger.info('开始创建下周dev分支.')
-        if (dev_local != EMPTY and dev_remote != EMPTY):
-            if (dev_local < dev_remote):
-                logger.info('远端分支时间线晚于本地分支---将以远端最新分支创建下周dev分支')
-                git_base.checkout_branch_from_remote(
-                    next_dev_branch, REMOTE_ORIGIN + dev_remote, work_path)
-            else:
-                logger.info('本地分支时间线晚于远端分支---将以本地最新分支创建下周dev分支')
-                git_base.checkout_branch(dev_local, work_path)
-                git_base.create_local_branch(next_dev_branch, work_path)
+        if (dev_remote != EMPTY):
+            git_base.checkout_branch_from_remote(
+                next_dev_branch, REMOTE_ORIGIN + dev_remote, work_path)
         else:
             # 以默认分支创建下周分支
-            logger.info('默认以当前分支创建下周分支')
+            logger.info('默认以当前分支创建下周分支' + current_branch_name)
             git_base.create_local_branch(next_dev_branch, work_path)
 
         # create release branch
         logger.info('开始创建下周release分支.')
-        if (release_local != EMPTY and release_remote != EMPTY):
-            if (release_local < release_remote):
-                logger.info('远端分支时间线晚于本地分支---将以远端最新分支创建下周release分支')
-                git_base.checkout_branch_from_remote(
-                    next_release_branch, REMOTE_ORIGIN + dev_remote, work_path)
-            else:
-                logger.info('本地分支时间线晚于远端分支---将以本地最新分支创建下周release分支')
-                git_base.checkout_branch(dev_local, work_path)
-                git_base.create_local_branch(next_release_branch, work_path)
+        if (release_remote != EMPTY):
+            git_base.checkout_branch_from_remote(
+                next_release_branch, REMOTE_ORIGIN + dev_remote, work_path)
         else:
             # 以默认分支创建下周分支
-            _, all_branch_info, _ = git_base.check_local_branch(work_path)
-            current_branch_name = get_current_branch(all_branch_info)
             logger.info('默认以当前分支创建下周分支:' + current_branch_name)
             git_base.create_local_branch(next_release_branch, work_path)
 
-        # checkout local branch dev to the lastest
-        # git_base.create_local_branch(next_dev_branch, work_path)
-        # checkout local branch dev to the lastest
-        # git_base.create_local_branch(next_release_branch, work_path)
         # 推送分支到远端(需要检查远端是否限制Push权限))
         # git_base.push_branch_to_remote(work_path, 'origin',
         #                                next_version_branch)
