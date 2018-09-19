@@ -20,3 +20,10 @@ pip install arrow
 此工具主要提供给项目管理员master使用，使用前请保证对应的分支有push权限，否则分支在本地创建后不能正常的Push到远端，后续会考虑增加模拟登陆来实现对分支权限的控制
 
 ## 启动
+```
+git clone http://git.dev.cmrh.com/chenn001/GitTools.git
+
+cd GitTools
+
+python client_window.py
+```
