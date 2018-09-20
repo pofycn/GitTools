@@ -12,8 +12,6 @@ RELEASE_PREFIX = 'release_'
 DEV_PREFIX = 'dev_'
 REMOTE_DEVBRANCH_PREFIX = 'dev'
 REMOTE_RELEASEBRANCH_PREFIX = 'release'
-REMOTE_ORIGIN_PREFIX = 'remotes/origin/'
-REMOTE_ORIGIN = 'origin/'
 EMPTY = 'EMPTY'
 BRANCH_CHECK_DEFAULT = 0
 BRANCH_CHECK_DEV_EXIST = 1
@@ -114,12 +112,10 @@ def get_lastest_branch(branch_name_list):
             str_nospace = re.sub('\s', '', str)
 
             if (str_nospace.startswith(REMOTE_DEVBRANCH_PREFIX)):
-                remote_dev_array.append(
-                    str_nospace.split(REMOTE_ORIGIN_PREFIX)[1])
+                remote_dev_array.append(str_nospace)
 
             if (str_nospace.startswith(REMOTE_RELEASEBRANCH_PREFIX)):
-                remote_release_array.append(
-                    str_nospace.split(REMOTE_ORIGIN_PREFIX)[1])
+                remote_release_array.append(str_nospace)
 
         # print('============remote dev branch===============')
         remote_dev_array.sort()
