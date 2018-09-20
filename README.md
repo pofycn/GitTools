@@ -1,15 +1,18 @@
 # GitTools
-给CMFT写的Git分支创建偷懒工具
+版本分支创建偷懒工具 for CMFT
 (˶‾᷄ ⁻̫ ‾᷅˵)
 
 ## 安装相关依赖
 python 3.x
 ```
 pip install arrow
+pip install --upgrade python-gitlab
 ```
-
+pip install --upgrade python-gitlab
 ## 功能
-一键创建下周版本分支
+* 一键创建下周版本分支
+* 查看分支功能
+* 一键冻结版本
 
 ## 操作流程
 1. 选择相应工程目录

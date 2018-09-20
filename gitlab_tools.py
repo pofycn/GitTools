@@ -12,9 +12,9 @@ gl = gitlab.Gitlab.from_config('cmft', ['cfg/python-gitlab.cfg'])
 gl.auth()
 
 
-# list all the projects that yourself owned
+# list all the projects that you can see
 def list_all_projects():
-    projects = gl.projects.list(owned=True)
+    projects = gl.projects.list(all=True, order_by='name', sort='asc')
     for project in projects:
         print('project detail--->project id:', project.attributes['id'], ',',
               'project-name:', project.attributes['name'])
@@ -33,7 +33,7 @@ def list_all_groups():
 # Get a project by ID
 def get_project_by_id(project_id):
     project = gl.projects.get(project_id)
-    return project.attributes
+    return project
 
 
 # Get project id and name
@@ -43,15 +43,77 @@ def get_project_name(data):
     return project_id, project_name
 
 
+# get branches info by project id
+def get_branches_by_project_id(project_id):
+    branches = get_project_by_id(project_id).branches.list()
+    return branches
+
+
+# protect branch by branch name
+def protect_branch(project_id, branch_name):
+    try:
+        project = get_project_by_id(project_id)
+        branch = project.branches.get(branch_name)
+        branch.protect(allowed_to_push='no one', allowed_to_merge='no one')
+        print('关闭分支developoer提交、合并权限成功，分支名：', branch_name)
+    except Exception as e:
+        print('关闭分支developoer提交、合并权限失败', branch_name)
+        return
+
+
+# unprotect branch by branch name
+def unprotect_branch(project_id, branch_name):
+    try:
+        project = get_project_by_id(project_id)
+        branch = project.branches.get(branch_name)
+        branch.unprotect()
+        print('开放分支提交、合并权限成功，分支名：', branch_name)
+    except Exception as e:
+        print('开放分支提交、合并权限失败！', e)
+        return
+
+
+# create branch
+def create_branch(project_id, branch_name, ref_branch):
+    try:
+        project = get_project_by_id(project_id)
+        branch = project.branches.create({
+            'branch': branch_name,
+            'ref': ref_branch
+        })
+        print('以', ref_branch, '创建分支:', branch_name, '---成功！')
+        return branch
+    except Exception as e:
+        print('创建分支失败！', e)
+        return
+
+
+# delete branch
+def delete_branch(project_id, branch_name):
+    try:
+        project = get_project_by_id(project_id)
+        branch = project.branches.delete(branch_name)
+        print('删除分支:', branch_name, '---成功！')
+    except Exception as e:
+        print('删除分支失败！', e)
+        return
+
+
 def test():
     print('====================test====================')
-    list_all_projects()
+    # list_all_projects()
 
     # list_all_groups()
 
     # project_info = get_project_by_id(1174)
     # project_id,project_name = get_project_name(project_info)
     # print(project_id,',',project_name)
+
+    # protect_branch(1174, 'release')
+    # unprotect_branch(1174, 'release')
+
+    # branch = create_branch(1174, 'dev_20180920')
+    # delete_branch(1174, 'dev_20180920')
 
 
 if __name__ == '__main__':
