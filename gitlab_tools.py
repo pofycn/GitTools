@@ -32,8 +32,13 @@ def list_all_groups():
 
 # Get a project by ID
 def get_project_by_id(project_id):
-    project = gl.projects.get(project_id)
-    return project
+    try:
+        project = gl.projects.get(project_id)
+        # print('获取项目信息成功!',project)
+        print('获取项目信息成功!')
+        return project
+    except Exception as e:
+        print('获取项目信息失败!', e)
 
 
 # Get project id and name
@@ -44,9 +49,17 @@ def get_project_name(data):
 
 
 # get branches info by project id
-def get_branches_by_project_id(project_id):
-    branches = get_project_by_id(project_id).branches.list()
-    return branches
+def get_branches_names_by_project_id(project_id):
+    try:
+        branches = get_project_by_id(project_id).branches.list()
+        branch_name_list = []
+        for branch in branches:
+            branch_name_list.append(branch.attributes['name'])
+        print('获取分支信息成功！结果：', branch_name_list)
+        return branch_name_list
+    except Exception as e:
+        print('获取分支信息失败！', e)
+        return
 
 
 # protect branch by branch name
@@ -104,6 +117,8 @@ def test():
     # list_all_projects()
 
     # list_all_groups()
+
+    branches = get_branches_names_by_project_id(1174)
 
     # project_info = get_project_by_id(1174)
     # project_id,project_name = get_project_name(project_info)

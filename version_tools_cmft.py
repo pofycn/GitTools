@@ -5,30 +5,26 @@ __author__ = 'Jerry Chan'
 import arrow
 import git_base
 import log_utils
+import gitlab_tools
 import re
 
 RELEASE_PREFIX = 'release_'
 DEV_PREFIX = 'dev_'
-LOCAL_DEVBRANCH_PREFIX = 'dev'
-LOCAL_RELEASEBRANCH_PREFIX = 'release'
-REMOTE_DEVBRANCH_PREFIX = 'remotes/origin/dev'
-REMOTE_RELEASEBRANCH_PREFIX = 'remotes/origin/release'
+REMOTE_DEVBRANCH_PREFIX = 'dev'
+REMOTE_RELEASEBRANCH_PREFIX = 'release'
 REMOTE_ORIGIN_PREFIX = 'remotes/origin/'
 REMOTE_ORIGIN = 'origin/'
 EMPTY = 'EMPTY'
+BRANCH_CHECK_DEFAULT = 0
+BRANCH_CHECK_DEV_EXIST = 1
+BRANCH_CHECK_RELEASE_EXIST = 2
+
 logger = log_utils.get_logger()
 
 
-# main test function
-def main():
-    # git_base.checkGitRepoStatus('/Users/pofy/Documents/projects_py/GitTools')
-    create_next_week_branch('release_20180927',
-                            '/Users/pofy/Documents/projects_py/GitTools')
-
-
 # 创建下周分支
-def create_next_week_branch(current_week_branch, work_path):
-    print('准备开始创建下周分支', '当前分支:', current_week_branch)
+def create_next_week_branch(project_id):
+    print('准备创建下周分支')
     try:
         current_branch_trans_time = arrow.now().format('YYYYMMDD')
         logger.info('当前日期:' + current_branch_trans_time)
@@ -36,53 +32,45 @@ def create_next_week_branch(current_week_branch, work_path):
         next_version_date = arrow.utcnow().shift(weekday=3).format('YYYYMMDD')
         logger.info('下期版本日期:' + next_version_date)
 
-        _, stdout, _ = git_base.check_local_branch(work_path)
-        # get lastest branch
-        dev_local, release_local, dev_remote, release_remote = get_lastest_branch(
-            stdout)
+        # _, stdout, _ = git_base.check_local_branch(work_path)
 
-        logger.info('最新本地及远端分支:' + dev_local + ',' + release_local + ',' +
-                    dev_remote + ',' + release_remote)
+        branch_name_list = gitlab_tools.get_branches_names_by_project_id(
+            project_id)
+        # get lastest branch
+        dev_remote, release_remote = get_lastest_branch(branch_name_list)
+
+        logger.info('最新远端分支:' + dev_remote + ',' + release_remote)
+
+        next_branch_check_flag = BRANCH_CHECK_DEFAULT
+
         # next dev branch name
         next_dev_branch = DEV_PREFIX + next_version_date
-        if (next_dev_branch == dev_local or next_dev_branch == dev_remote):
-            logger.info('下周dev分支已经存在，无需创建，请按需检出对应分支')
-            return
+        if (next_dev_branch == dev_remote):
+            next_branch_check_flag = BRANCH_CHECK_DEV_EXIST
 
         # next release branch name
         next_release_branch = RELEASE_PREFIX + next_version_date
-        if (next_release_branch == release_local
-                or next_release_branch == release_remote):
-            logger.info('下周release分支已经存在，无需创建，请按需检出对应分支')
-            return
-        logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
+        if (next_release_branch == release_remote):
+            next_branch_check_flag = BRANCH_CHECK_RELEASE_EXIST
 
-        _, all_branch_info, _ = git_base.check_local_branch(work_path)
-        current_branch_name = get_current_branch(all_branch_info)
+        # check dev or release branches already exist
+        if (next_branch_check_flag == BRANCH_CHECK_DEV_EXIST):
+            logger.info('下周版本dev分支已经存在，无需创建，请检出对应分支')
+            return
+        elif (next_branch_check_flag == BRANCH_CHECK_RELEASE_EXIST):
+            logger.info('下周release分支已经存在，无需创建，请检出对应分支')
+            return
+
+        logger.info('下期版本分支:' + next_dev_branch + '/' + next_release_branch)
 
         # create dev branch
         logger.info('\n开始创建下周dev分支.')
-        if (dev_remote != EMPTY):
-            git_base.checkout_branch_from_remote(
-                next_dev_branch, REMOTE_ORIGIN + dev_remote, work_path)
-        else:
-            # 以默认分支创建下周分支
-            logger.info('默认以当前分支创建下周分支，当前分支:' + current_branch_name)
-            git_base.create_local_branch(next_dev_branch, work_path)
+        gitlab_tools.create_branch(project_id, next_dev_branch, dev_remote)
 
         # create release branch
         logger.info('\n开始创建下周release分支.')
-        if (release_remote != EMPTY):
-            git_base.checkout_branch_from_remote(
-                next_release_branch, REMOTE_ORIGIN + dev_remote, work_path)
-        else:
-            # 以默认分支创建下周分支
-            logger.info('默认以当前分支创建下周分支，当前分支:' + current_branch_name)
-            git_base.create_local_branch(next_release_branch, work_path)
-
-        # 推送分支到远端(需要检查远端是否限制Push权限))
-        # git_base.push_branch_to_remote(work_path, 'origin',
-        #                                next_version_branch)
+        gitlab_tools.create_branch(project_id, next_release_branch,
+                                   release_remote)
     except Exception as e:
         logger.info('创建下周分支过程出错' + e)
 
@@ -115,27 +103,15 @@ def check_branch_exist(branch_name, stdout):
 
 
 # 获取最新分支  local & remote --- dev & release branch
-def get_lastest_branch(stdout):
+def get_lastest_branch(branch_name_list):
     try:
-        str_array = stdout.split('\n')
         result_array = []
-        local_dev_array = []
-        local_release_array = []
         # 远端分支list
         remote_dev_array = []
         remote_release_array = []
-        for str in str_array:
+        for str in branch_name_list:
             # 字符串去空处理
             str_nospace = re.sub('\s', '', str)
-
-            if (str_nospace.find('*') != -1):
-                str_nospace = str_nospace.replace('*', '')
-
-            if (str_nospace.startswith(LOCAL_DEVBRANCH_PREFIX)):
-                local_dev_array.append(str_nospace)
-
-            if (str_nospace.startswith(LOCAL_RELEASEBRANCH_PREFIX)):
-                local_release_array.append(str_nospace)
 
             if (str_nospace.startswith(REMOTE_DEVBRANCH_PREFIX)):
                 remote_dev_array.append(
@@ -144,14 +120,6 @@ def get_lastest_branch(stdout):
             if (str_nospace.startswith(REMOTE_RELEASEBRANCH_PREFIX)):
                 remote_release_array.append(
                     str_nospace.split(REMOTE_ORIGIN_PREFIX)[1])
-
-        # print('============local dev branch================')
-        local_dev_array.sort()
-        # print('local dev branch array:', local_dev_array)
-
-        # print('============local dev branch================')
-        local_release_array.sort()
-        # print('local release branch array:', local_release_array)
 
         # print('============remote dev branch===============')
         remote_dev_array.sort()
@@ -162,16 +130,6 @@ def get_lastest_branch(stdout):
         # print('remote dev branch array:', remote_release_array)
 
         print('============branch count====================')
-        counts_local_dev = len(local_dev_array)
-        if (counts_local_dev == 0):
-            counts_local_dev = counts_local_dev + 1
-            local_dev_array.append(EMPTY)
-
-        counts_local_release = len(local_release_array)
-        if (counts_local_release == 0):
-            counts_local_release += 1
-            local_release_array.append(EMPTY)
-
         counts_remote_dev = len(remote_dev_array)
         if (counts_remote_dev == 0):
             counts_remote_dev += 1
@@ -187,13 +145,17 @@ def get_lastest_branch(stdout):
 
         # print('remote dev branch counts:', counts_remote_dev)
         # print('remote release branch counts:', counts_remote_release)
-        return local_dev_array[counts_local_dev - 1], local_release_array[
-            counts_local_release -
-            1], remote_dev_array[counts_remote_dev - 1], remote_release_array[
-                counts_remote_release - 1]
+        return remote_dev_array[counts_remote_dev - 1], remote_release_array[
+            counts_remote_release - 1]
     except Exception as e:
         logger.info('查看最新版本分支错误')
         return -1
+
+
+# main test function
+def main():
+    # git_base.checkGitRepoStatus('/Users/pofy/Documents/projects_py/GitTools')
+    create_next_week_branch(1174)
 
 
 if __name__ == '__main__':
