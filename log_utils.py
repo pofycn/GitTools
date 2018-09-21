@@ -4,7 +4,6 @@ __author__ = 'Jerry Chan'
 
 import logging
 import os
-import command_tools
 
 logger = logging.getLogger('GitTools_log')
 

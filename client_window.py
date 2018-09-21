@@ -41,7 +41,7 @@ def append_text_to_text_area(text_content):
 
 # 冻结版本
 def freeze_version(event):
-    append_text_to_text_area('hello\n')
+    print('freeze version')
 
 
 # 选择项目文件目录
@@ -57,6 +57,16 @@ def choose_project_path(event):
         text_area.insert(1.0, logs_content)
     else:
         work_path_label.config(text="您没有选择任何目录")
+
+
+# 选择需要冻结的版本
+def freeze_branch(event):
+    print('freeze branch')
+
+
+# set access token
+def set_access_token(event):
+    print('set access token')
 
 
 # 创建窗口程序
@@ -79,7 +89,9 @@ Label(
     root, text='Access Token:').grid(
         row=2, column=0, padx=5, pady=5, sticky=W)
 
-work_path_label = Label(root, text='请设置access token', relief=GROOVE, width=30)
+work_path_label = Label(
+    root, text='请点击设置access token', relief=GROOVE, width=30)
+work_path_label.bind('<Button-1>', set_access_token)
 work_path_label.grid(row=2, column=1, padx=5, pady=5, sticky=W)
 
 create_next_branch_button = Button(root, text="一键创建下周版本", width=15)
@@ -88,7 +100,8 @@ create_next_branch_button.grid(row=3, column=1, pady=5, sticky=W)
 
 Label(root, text='版本冻结:').grid(row=4, column=0, padx=5, pady=5, sticky=W)
 
-work_path_label = Label(root, text='请选择需要冻结的版本', relief=GROOVE, width=30)
+work_path_label = Label(root, text='请点击选择需要冻结的版本', relief=GROOVE, width=30)
+work_path_label.bind('<Button-1>', freeze_branch)
 work_path_label.grid(row=4, column=1, padx=5, pady=5, sticky=W)
 
 freeze_version_button = Button(root, text="冻结所选版本", width=15)

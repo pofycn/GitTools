@@ -4,6 +4,9 @@ __author__ = 'Jerry Chan'
 
 import gitlab
 import json
+import log_utils
+
+logger = log_utils.get_logger()
 
 # private token or personal token authentication
 gl = gitlab.Gitlab.from_config('cmft', ['cfg/python-gitlab.cfg'])
@@ -16,8 +19,9 @@ gl.auth()
 def list_all_projects():
     projects = gl.projects.list(all=True, order_by='name', sort='asc')
     for project in projects:
-        print('project detail--->project id:', project.attributes['id'], ',',
-              'project-name:', project.attributes['name'])
+        logger.info('project detail--->project id:' +
+                    project.attributes['id'] + ',' + 'project-name:' +
+                    project.attributes['name'])
     return projects
 
 
@@ -25,8 +29,8 @@ def list_all_projects():
 def list_all_groups():
     all_groups = gl.groups.list()
     for group in all_groups:
-        print('group detail--->group id:', group.attributes['id'], ',',
-              'group-name:', group.attributes['name'])
+        logger.info('group detail--->group id:' + group.attributes['id'] +
+                    ',' + 'group-name:' + group.attributes['name'])
     return all_groups
 
 
@@ -35,10 +39,10 @@ def get_project_by_id(project_id):
     try:
         project = gl.projects.get(project_id)
         # print('获取项目信息成功!',project)
-        print('获取项目信息成功! 项目名:', project.attributes['name'])
+        logger.info('获取项目信息成功! 项目名:' + project.attributes['name'])
         return project
     except Exception as e:
-        print('获取项目信息失败!', e)
+        logger.info('获取项目信息失败!' + e)
 
 
 # Get project id and name
@@ -55,10 +59,10 @@ def get_branches_names_by_project_id(project_id):
         branch_name_list = []
         for branch in branches:
             branch_name_list.append(branch.attributes['name'])
-        print('获取分支信息成功！结果:', branch_name_list)
+        logger.info('获取分支信息成功！结果:' + str(branch_name_list))
         return branch_name_list
     except Exception as e:
-        print('获取分支信息失败！', e)
+        logger.info('获取分支信息失败！' + e)
         return
 
 
@@ -68,9 +72,9 @@ def protect_branch(project_id, branch_name):
         project = get_project_by_id(project_id)
         branch = project.branches.get(branch_name)
         branch.protect(allowed_to_push='no one', allowed_to_merge='no one')
-        print('关闭分支developoer提交、合并权限成功，分支名:', branch_name)
+        logger.info('关闭分支developoer提交、合并权限成功，分支名:' + branch_name)
     except Exception as e:
-        print('关闭分支developoer提交、合并权限失败', branch_name)
+        logger.info('关闭分支developoer提交、合并权限失败' + branch_name)
         return
 
 
@@ -80,9 +84,9 @@ def unprotect_branch(project_id, branch_name):
         project = get_project_by_id(project_id)
         branch = project.branches.get(branch_name)
         branch.unprotect()
-        print('开放分支提交、合并权限成功，分支名:', branch_name)
+        logger.info('开放分支提交、合并权限成功，分支名:' + branch_name)
     except Exception as e:
-        print('开放分支提交、合并权限失败！', e)
+        logger.info('开放分支提交、合并权限失败！' + e)
         return
 
 
@@ -94,10 +98,10 @@ def create_branch(project_id, branch_name, ref_branch):
             'branch': branch_name,
             'ref': ref_branch
         })
-        print('以', ref_branch, '创建分支:', branch_name, '---成功！')
+        logger.info('以' + ref_branch + '创建分支:' + branch_name + '---成功！')
         return branch
     except Exception as e:
-        print('创建分支失败！', e)
+        logger.info('创建分支失败！' + e)
         return
 
 
@@ -106,9 +110,9 @@ def delete_branch(project_id, branch_name):
     try:
         project = get_project_by_id(project_id)
         branch = project.branches.delete(branch_name)
-        print('删除分支:', branch_name, '---成功！')
+        logger.info('删除分支:' + branch_name + '---成功！')
     except Exception as e:
-        print('删除分支失败！', e)
+        logger.info('删除分支失败！' + e)
         return
 
 
@@ -128,8 +132,8 @@ def test():
     # unprotect_branch(1174, 'release')
 
     # branch = create_branch(1174, 'dev_20180920')
-    # delete_branch(1174, 'dev')
-    # delete_branch(1174, 'release')
+    delete_branch(1174, 'dev_20180927')
+    delete_branch(1174, 'release_20180927')
 
 
 if __name__ == '__main__':
