@@ -163,16 +163,6 @@ def fetch_index(work_path):
     return result, stdout, stderr
 
 
-# def main():
-# if (checkGitRepoStatus()):
-#     if (addAllChangesToStatge()):
-#         commitChanges()
-# checkLocalBranch()
-# createLocalBranch('dev')
-# deleteLocalBranch('dev')
-# executeCommand('')
-
-
 def notify():
     print('Don\'t run gitbase directly~')
 

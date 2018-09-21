@@ -156,7 +156,7 @@ def get_lastest_branch(branch_name_list):
 def main():
     print('====================test====================')
     # git_base.checkGitRepoStatus('/Users/pofy/Documents/projects_py/GitTools')
-    create_next_week_branch(1174)
+    # create_next_week_branch(1174)
 
     # delete_branch(1174, 'dev')
     # delete_branch(1174, 'release')
