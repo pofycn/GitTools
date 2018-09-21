@@ -35,7 +35,7 @@ def get_project_by_id(project_id):
     try:
         project = gl.projects.get(project_id)
         # print('获取项目信息成功!',project)
-        print('获取项目信息成功!')
+        print('获取项目信息成功! 项目名:', project.attributes['name'])
         return project
     except Exception as e:
         print('获取项目信息失败!', e)
@@ -55,7 +55,7 @@ def get_branches_names_by_project_id(project_id):
         branch_name_list = []
         for branch in branches:
             branch_name_list.append(branch.attributes['name'])
-        print('获取分支信息成功！结果：', branch_name_list)
+        print('获取分支信息成功！结果:', branch_name_list)
         return branch_name_list
     except Exception as e:
         print('获取分支信息失败！', e)
@@ -68,7 +68,7 @@ def protect_branch(project_id, branch_name):
         project = get_project_by_id(project_id)
         branch = project.branches.get(branch_name)
         branch.protect(allowed_to_push='no one', allowed_to_merge='no one')
-        print('关闭分支developoer提交、合并权限成功，分支名：', branch_name)
+        print('关闭分支developoer提交、合并权限成功，分支名:', branch_name)
     except Exception as e:
         print('关闭分支developoer提交、合并权限失败', branch_name)
         return
@@ -80,7 +80,7 @@ def unprotect_branch(project_id, branch_name):
         project = get_project_by_id(project_id)
         branch = project.branches.get(branch_name)
         branch.unprotect()
-        print('开放分支提交、合并权限成功，分支名：', branch_name)
+        print('开放分支提交、合并权限成功，分支名:', branch_name)
     except Exception as e:
         print('开放分支提交、合并权限失败！', e)
         return
@@ -118,7 +118,7 @@ def test():
 
     # list_all_groups()
 
-    branches = get_branches_names_by_project_id(1174)
+    # branches = get_branches_names_by_project_id(1174)
 
     # project_info = get_project_by_id(1174)
     # project_id,project_name = get_project_name(project_info)
@@ -128,7 +128,8 @@ def test():
     # unprotect_branch(1174, 'release')
 
     # branch = create_branch(1174, 'dev_20180920')
-    # delete_branch(1174, 'dev_20180920')
+    # delete_branch(1174, 'dev')
+    # delete_branch(1174, 'release')
 
 
 if __name__ == '__main__':

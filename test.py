@@ -21,11 +21,20 @@ def main():
 
     # path1: /Users/pofy/Documents/projects_py/GitTools
     # path2: /Users/pofy/Documents/projects/shop-app
-    result, stdout, stderr = git_base.check_local_branch(
-        '/Users/pofy/Documents/projects_py/GitTools')
+    # result, stdout, stderr = git_base.check_local_branch(
+    #     '/Users/pofy/Documents/projects_py/GitTools')
     print('=========================测试=========================')
-    print(cmft_tools.check_branch_exist('master', stdout))
-    print(cmft_tools.get_lastest_branch(stdout))
+    # print(cmft_tools.check_branch_exist('master', stdout))
+    # print(cmft_tools.get_lastest_branch(stdout))
+    
+    current_time = arrow.get("2018-09-21 11:30", "YYYY-MM-DD HH:mm")
+    weekday = current_time.format('ddd')
+    print('当前日期：', current_time, weekday)
+    print('Fri' == weekday)
+    if('Fri'==weekday):
+        current_time = current_time.shift(days=-1)
+    next_version_date = current_time.shift(weekday=3).shift(weeks=+1).format('YYYYMMDD')
+    print('下期版本日期:' + next_version_date)
 
 
 if __name__ == '__main__':
