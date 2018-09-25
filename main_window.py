@@ -18,6 +18,8 @@ class RootWindow(tk.Tk):
         super().__init__()
         self.title('CMFT Git Tools')
         self.resizable(False, False)
+        self.access_token_label = tk.Label(
+            self, text='请点击设置access token', relief=tk.GROOVE, width=30)
         # 程序界面
         self.setup_ui()
 
@@ -45,10 +47,11 @@ class RootWindow(tk.Tk):
             self, text='Access Token:').grid(
                 row=2, column=0, padx=5, pady=5, sticky=tk.W)
 
-        work_path_label = tk.Label(
-            self, text='请点击设置access token', relief=tk.GROOVE, width=30)
-        work_path_label.bind('<Button-1>', self.set_access_token)
-        work_path_label.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+        # access_token_label = tk.Label(
+        #     self, text='请点击设置access token', relief=tk.GROOVE, width=30)
+        self.access_token_label.bind('<Button-1>', self.setup_accesstoken)
+        self.access_token_label.grid(
+            row=2, column=1, padx=5, pady=5, sticky=tk.W)
 
         tk.Label(
             self, text='项目名：').grid(
@@ -129,7 +132,16 @@ class RootWindow(tk.Tk):
 
     # set access token
     def set_access_token(self, event):
-        print('set access token')
+        access_token_dialog = AccessTokenDialog()
+        self.wait_window(access_token_dialog)
+        return access_token_dialog.accesstoken
+
+    # set access token to label
+    def setup_accesstoken(self, event):
+        access_token = self.set_access_token(self)
+        if access_token is None:
+            return
+        self.access_token_label.config(text=access_token)
 
     # set projects
     def set_projects(self, event):
@@ -138,7 +150,7 @@ class RootWindow(tk.Tk):
 
 class AccessTokenDialog(tk.Toplevel):
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self.title('设置Access token')
         # 弹窗界面
         self.setup_ui()
@@ -146,22 +158,23 @@ class AccessTokenDialog(tk.Toplevel):
     def setup_ui(self):
         row1 = tk.Frame(self)
         row1.pack(fill="x")
-        tk.Label(row1, text='姓名：', width=8).pack(side=tk.LEFT)
-        self.name = tk.StringVar()
+        tk.Label(row1, text='access token：', width=15).pack(side=tk.LEFT)
+        self.accesstoken = tk.StringVar()
         tk.Entry(
-            row1, textvariable=self.name, width=20).pack(side=tk.LEFT)
-        # 第二行
+            row1, textvariable=self.accesstoken, width=30).pack(side=tk.RIGHT)
+
         row2 = tk.Frame(self)
-        row2.pack(fill="x", ipadx=1, ipady=1)
-        tk.Label(row2, text='年龄：', width=8).pack(side=tk.LEFT)
-        self.age = tk.IntVar()
-        tk.Entry(
-            row2, textvariable=self.age, width=20).pack(side=tk.LEFT)
-        # 第三行
-        row3 = tk.Frame(self)
-        row3.pack(fill="x")
-        tk.Button(row3, text="取消").pack(side=tk.RIGHT)
-        tk.Button(row3, text="确定").pack(side=tk.RIGHT)
+        row2.pack(fill="x")
+        tk.Button(row2, text="取消", command=self.cancel).pack(side=tk.RIGHT)
+        tk.Button(row2, text="确定", command=self.ok).pack(side=tk.RIGHT)
+
+    def ok(self):
+        self.accesstoken = self.accesstoken.get()
+        self.destroy()
+
+    def cancel(self):
+        self.accesstoken = None
+        self.destroy()
 
 
 if __name__ == '__main__':
