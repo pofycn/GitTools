@@ -5,10 +5,13 @@ __author__ = 'Jerry Chan'
 import tkinter as tk
 import arrow
 import git_base
+import gitlab_tools
 import log_utils
 import version_tools_cmft as cmft_tools
 
 logger = log_utils.get_logger()
+DEFAULT_ACCESS_TOKEN = '请点击设置access token'
+DEFAILT_PROJECT_NAME = '请点击选择项目进行管理'
 
 
 # main window
@@ -19,7 +22,18 @@ class RootWindow(tk.Tk):
         self.title('CMFT Git Tools')
         self.resizable(False, False)
         self.access_token_label = tk.Label(
-            self, text='请点击设置access token', relief=tk.GROOVE, width=30)
+            self, text=DEFAULT_ACCESS_TOKEN, relief=tk.GROOVE, width=30)
+        self.choose_project_label = tk.Label(
+            self, text=DEFAILT_PROJECT_NAME, relief=tk.GROOVE, width=30)
+
+        access_token = gitlab_tools.get_access_token()
+        if access_token != None or access_token != '':
+            gitlab_tools.set_access_token(access_token)
+            self.access_token_label.config(text=access_token)
+        else:
+            logger.info('授权失败，请重新设置access token')
+            self.access_token_label.config(text='授权失败，请重新设置access token')
+
         # 程序界面
         self.setup_ui()
 
@@ -56,10 +70,11 @@ class RootWindow(tk.Tk):
         tk.Label(
             self, text='项目名：').grid(
                 row=3, column=0, padx=5, pady=5, sticky=tk.W)
-        choose_project_label = tk.Label(
-            self, text='请点击选择项目进行管理', relief=tk.GROOVE, width=30)
-        choose_project_label.bind('<Button-1>', self.set_projects)
-        choose_project_label.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        # choose_project_label = tk.Label(
+        #     self, text='请点击选择项目进行管理', relief=tk.GROOVE, width=30)
+        self.choose_project_label.bind('<Button-1>', self.setup_projects)
+        self.choose_project_label.grid(
+            row=3, column=1, padx=5, pady=5, sticky=tk.W)
 
         create_next_branch_button = tk.Button(self, text="一键创建下周版本", width=15)
         create_next_branch_button.bind('<Button-1>', self.auto_create_branch)
@@ -112,20 +127,6 @@ class RootWindow(tk.Tk):
     def freeze_version(self, event):
         print('freeze version')
 
-    # 选择项目文件目录
-    def choose_project_path(self, event):
-        log_utils.clear_log_content()
-        RootWindow.text_area.delete(0.0, tk.END)
-        path = tk.filedialog.askdirectory()
-        if path != '':
-            logger.info('工作目录为:' + path)
-            RootWindow.work_path_label.config(text=path)
-            result, stdout, stderr = git_base.check_local_branch(path)
-            logs_content = log_utils.read_logs()
-            RootWindow.text_area.insert(1.0, logs_content)
-        else:
-            RootWindow.work_path_label.config(text="您没有选择任何目录")
-
     # 选择需要冻结的版本
     def freeze_branch(self, event):
         print('freeze branch')
@@ -142,10 +143,19 @@ class RootWindow(tk.Tk):
         if access_token is None:
             return
         self.access_token_label.config(text=access_token)
+        gitlab_tools.set_access_token(access_token)
 
     # set projects
     def set_projects(self, event):
-        print('set projects')
+        project_name_dialog = ProjectsDialog()
+        self.wait_window(project_name_dialog)
+        return project_name_dialog.project_name
+
+    def setup_projects(self, event):
+        project_name = self.set_projects(self)
+        if project_name is None:
+            return
+        self.choose_project_label.config(text=project_name)
 
 
 class AccessTokenDialog(tk.Toplevel):
@@ -174,6 +184,53 @@ class AccessTokenDialog(tk.Toplevel):
 
     def cancel(self):
         self.accesstoken = None
+        self.destroy()
+
+
+class ProjectsDialog(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title('选择项目')
+        # 弹窗界面
+        self.setup_ui()
+
+    def setup_ui(self):
+        row1 = tk.Frame(self)
+        row1.pack(fill="x")
+
+        # 加载项目列表
+        projects = gitlab_tools.list_all_projects()
+
+        tk.Label(row1, text='项目名称').pack(side=tk.TOP)
+        self.project_name = tk.StringVar()
+
+        row2 = tk.Frame(self)
+        row2.pack(fill="y")
+        for project in projects:
+            label_display_value = str(project.attributes['id']) + ':' + str(
+                project.attributes['name'])
+            tk.Radiobutton(
+                row2,
+                variable=self.project_name,
+                text=str(project.attributes['name']),
+                value=str(label_display_value),
+                padx=10,
+                pady=5).pack(anchor=tk.W)
+
+        self.project_name.set(
+            str(projects[0].attributes['id']) + ':' +
+            str(projects[0].attributes['name']))
+        row3 = tk.Frame(self)
+        row3.pack(fill="x")
+        tk.Button(row3, text="取消", command=self.cancel).pack(side=tk.RIGHT)
+        tk.Button(row3, text="确定", command=self.ok).pack(side=tk.RIGHT)
+
+    def ok(self):
+        self.project_name = self.project_name.get()
+        self.destroy()
+
+    def cancel(self):
+        self.project_name = None
         self.destroy()
 
 

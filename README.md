@@ -28,5 +28,5 @@ git clone http://git.dev.cmrh.com/chenn001/GitTools.git
 
 cd GitTools
 
-python client_window.py
+python main_window.py
 ```

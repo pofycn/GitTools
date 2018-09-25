@@ -5,23 +5,47 @@ __author__ = 'Jerry Chan'
 import gitlab
 import json
 import log_utils
+import configparser
 
 logger = log_utils.get_logger()
-
+CONFIG_FILE = 'cfg/python-gitlab.cfg'
 # private token or personal token authentication
-gl = gitlab.Gitlab.from_config('cmft', ['cfg/python-gitlab.cfg'])
+gl = gitlab.Gitlab.from_config('cmft', [CONFIG_FILE])
 # gl = gitlab.Gitlab('http://git.dev.cmrh.com', private_token='1hPfJmrdmuZMuJAeS1fy')
-
 gl.auth()
+
+
+# write access token to cfg file
+def set_access_token(access_token):
+    conf = configparser.ConfigParser()
+    conf.read(CONFIG_FILE)
+    conf.set('cmft', 'private_token', str(access_token))
+    conf.write(open(CONFIG_FILE, 'w'))
+    # 更新授权信息
+    try:
+        gl = gitlab.Gitlab.from_config('cmft', [CONFIG_FILE])
+        gl.auth()
+        logger.info('授权成功！')
+        return gl
+    except Exception as e:
+        logger.info('Exception' + str(e))
+
+
+# get access token
+def get_access_token():
+    conf = configparser.ConfigParser()
+    conf.read(CONFIG_FILE)
+    access_token = conf.get('cmft', 'private_token')
+    return access_token
 
 
 # list all the projects that you can see
 def list_all_projects():
-    projects = gl.projects.list(all=True, order_by='name', sort='asc')
-    for project in projects:
-        logger.info('project detail--->project id:' +
-                    project.attributes['id'] + ',' + 'project-name:' +
-                    project.attributes['name'])
+    projects = gl.projects.list(order_by='name', sort='asc', owned=True)
+    # for project in projects:
+    #     logger.info('project detail--->project id:' +
+    #                 str(project.attributes['id']) + ',' + 'project-name:' +
+    #                 str(project.attributes['name']))
     return projects
 
 
@@ -118,7 +142,7 @@ def delete_branch(project_id, branch_name):
 
 def test():
     print('====================test====================')
-    # list_all_projects()
+    list_all_projects()
 
     # list_all_groups()
 
@@ -132,8 +156,8 @@ def test():
     # unprotect_branch(1174, 'release')
 
     # branch = create_branch(1174, 'dev_20180920')
-    delete_branch(1174, 'dev_20180927')
-    delete_branch(1174, 'release_20180927')
+    # delete_branch(1174, 'dev_20180927')
+    # delete_branch(1174, 'release_20180927')
 
 
 if __name__ == '__main__':
