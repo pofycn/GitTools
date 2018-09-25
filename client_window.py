@@ -69,6 +69,11 @@ def set_access_token(event):
     print('set access token')
 
 
+# set projects
+def set_projects(event):
+    print('set projects')
+
+
 # 创建窗口程序
 root = Tk()
 root.title('CMFT Git Tools')
@@ -94,22 +99,27 @@ work_path_label = Label(
 work_path_label.bind('<Button-1>', set_access_token)
 work_path_label.grid(row=2, column=1, padx=5, pady=5, sticky=W)
 
+Label(root, text='项目名：').grid(row=3, column=0, padx=5, pady=5, sticky=W)
+choose_project_label = Label(root, text='请点击选择项目进行管理', relief=GROOVE, width=30)
+choose_project_label.bind('<Button-1>', set_projects)
+choose_project_label.grid(row=3, column=1, padx=5, pady=5, sticky=W)
+
 create_next_branch_button = Button(root, text="一键创建下周版本", width=15)
 create_next_branch_button.bind('<Button-1>', auto_create_branch)
-create_next_branch_button.grid(row=3, column=1, pady=5, sticky=W)
+create_next_branch_button.grid(row=4, column=1, pady=5, sticky=W)
 
-Label(root, text='版本冻结:').grid(row=4, column=0, padx=5, pady=5, sticky=W)
+Label(root, text='版本冻结:').grid(row=5, column=0, padx=5, pady=5, sticky=W)
 
 work_path_label = Label(root, text='请点击选择需要冻结的版本', relief=GROOVE, width=30)
 work_path_label.bind('<Button-1>', freeze_branch)
-work_path_label.grid(row=4, column=1, padx=5, pady=5, sticky=W)
+work_path_label.grid(row=5, column=1, padx=5, pady=5, sticky=W)
 
 freeze_version_button = Button(root, text="冻结所选版本", width=15)
 freeze_version_button.bind('<Button-1>', freeze_version)
-freeze_version_button.grid(row=5, column=1, pady=5, sticky=W)
+freeze_version_button.grid(row=6, column=1, pady=5, sticky=W)
 
-Label(root, text='结果:').grid(row=6, column=0, columnspan=2, sticky=W)
+Label(root, text='结果:').grid(row=7, column=0, columnspan=2, sticky=W)
 
 text_area = Text(root, background='grey')
-text_area.grid(row=7, column=0, columnspan=3)
+text_area.grid(row=8, column=0, columnspan=3)
 root.mainloop()
