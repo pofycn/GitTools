@@ -84,10 +84,10 @@ class RootWindow(tk.Tk):
             self, text='版本冻结:').grid(
                 row=5, column=0, padx=5, pady=5, sticky=tk.W)
 
-        work_path_label = tk.Label(
+        self.branch_label = tk.Label(
             self, text='请点击选择需要冻结的版本', relief=tk.GROOVE, width=30)
-        work_path_label.bind('<Button-1>', self.freeze_branch)
-        work_path_label.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+        self.branch_label.bind('<Button-1>', self.setup_freeze_branch)
+        self.branch_label.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
 
         freeze_version_button = tk.Button(self, text="冻结所选版本", width=15)
         freeze_version_button.bind('<Button-1>', self.freeze_version)
@@ -127,13 +127,26 @@ class RootWindow(tk.Tk):
         self.text_area.insert('end', text_content)
         self.text_area.mark_set('insert', 'end')
 
-    # 冻结版本
-    def freeze_version(self, event):
-        print('freeze version')
+    # 设置冻结分支
+    def setup_freeze_branch(self, event):
+        print('setup_freeze_branch')
+        branch_name = self.list_branch_name(self)
+        self.branch_label.config(text=branch_name)
 
     # 选择需要冻结的版本
-    def freeze_branch(self, event):
-        print('freeze branch')
+    def list_branch_name(self, event):
+        branch_list_dialog = branchListDialog(self)
+        self.wait_window(branch_list_dialog)
+        return branch_list_dialog.branch_name
+
+    # 执行冻结版本操作
+    def freeze_version(self, event):
+        project_info = str(self.choose_project_label.cget('text')).split(':')
+        project_id = project_info[0]
+        project_name = project_info[1]
+        branch_name = str(self.branch_label.cget('text'))
+        logger.info('准备冻结' + project_name + '项目的' + branch_name + '分支')
+        gitlab_tools.protect_branch(project_id, branch_name)
 
     # set access token
     def set_access_token(self, event):
@@ -235,6 +248,56 @@ class ProjectsDialog(tk.Toplevel):
 
     def cancel(self):
         self.project_name = None
+        self.destroy()
+
+
+class branchListDialog(tk.Toplevel):
+    def __init__(self, root_window):
+        super().__init__()
+        self.title('选择分支')
+        self.root_window = root_window
+        # 弹窗界面
+        self.setup_ui()
+
+    def setup_ui(self):
+        row1 = tk.Frame(self)
+        row1.pack(fill="x")
+        project_info = str(self.root_window.choose_project_label.cget('text'))
+        project_id = project_info.split(':')[0]
+        # 确认project id是否为空
+        if (project_id == None and project_id == DEFAILT_PROJECT_NAME):
+            print('项目名错误！', project_id)
+            return
+        # 加载项目所有分支
+        branch_name_list = gitlab_tools.get_branches_names_by_project_id(
+            project_id)
+
+        tk.Label(row1, text='分支名称').pack(side=tk.TOP)
+        self.branch_name = tk.StringVar()
+
+        row2 = tk.Frame(self)
+        row2.pack(fill="y")
+        for branch_name in branch_name_list:
+            tk.Radiobutton(
+                row2,
+                variable=self.branch_name,
+                text=str(branch_name),
+                value=str(branch_name),
+                padx=10,
+                pady=5).pack(anchor=tk.W)
+
+        self.branch_name.set(str(branch_name_list[0]))
+        row3 = tk.Frame(self)
+        row3.pack(fill="x")
+        tk.Button(row3, text="取消", command=self.cancel).pack(side=tk.RIGHT)
+        tk.Button(row3, text="确定", command=self.ok).pack(side=tk.RIGHT)
+
+    def ok(self):
+        self.branch_name = self.branch_name.get()
+        self.destroy()
+
+    def cancel(self):
+        self.branch_name = None
         self.destroy()
 
 

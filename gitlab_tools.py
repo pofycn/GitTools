@@ -147,6 +147,7 @@ def test():
     # list_all_groups()
 
     # branches = get_branches_names_by_project_id(1174)
+    # print(branches)
 
     # project_info = get_project_by_id(1174)
     # project_id,project_name = get_project_name(project_info)
