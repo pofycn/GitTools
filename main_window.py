@@ -129,7 +129,6 @@ class RootWindow(tk.Tk):
 
     # 设置冻结分支
     def setup_freeze_branch(self, event):
-        print('setup_freeze_branch')
         branch_name = self.list_branch_name(self)
         self.branch_label.config(text=branch_name)
 
