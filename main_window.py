@@ -97,14 +97,18 @@ class RootWindow(tk.Tk):
             self, text='结果:').grid(
                 row=7, column=0, columnspan=2, sticky=tk.W)
 
-        text_area = tk.Text(self, background='grey')
-        text_area.grid(row=8, column=0, columnspan=3)
+        self.text_area = tk.Text(self, background='grey')
+        self.text_area.grid(row=8, column=0, columnspan=3)
 
     # 一键创建下周分支
     def auto_create_branch(self, event):
         log_utils.clear_log_content()
+        # 获取选择的项目id
+        project_info = str(self.choose_project_label.cget('text'))
+        project_id = project_info.split(':')[0]
+
         # 创建下周分支
-        cmft_tools.create_next_week_branch(1174)
+        cmft_tools.create_next_week_branch(project_id)
 
         logs_content = log_utils.read_logs()
 
