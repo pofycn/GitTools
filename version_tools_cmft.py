@@ -3,7 +3,6 @@
 __author__ = 'Jerry Chan'
 
 import arrow
-import git_base
 import log_utils
 import gitlab_tools
 import re
@@ -38,8 +37,6 @@ def create_next_week_branch(project_id):
         next_version_date = now.shift(weekday=3).shift(
             weeks=+1).format('YYYYMMDD')
         logger.info('下期版本日期:' + next_version_date)
-
-        # _, stdout, _ = git_base.check_local_branch(work_path)
 
         branch_name_list = gitlab_tools.get_branches_names_by_project_id(
             project_id)
@@ -155,7 +152,6 @@ def get_lastest_branch(branch_name_list):
 # main test function
 def main():
     print('====================test====================')
-    # git_base.checkGitRepoStatus('/Users/pofy/Documents/projects_py/GitTools')
     # create_next_week_branch(1174)
 
     # delete_branch(1174, 'dev')

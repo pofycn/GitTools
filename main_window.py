@@ -4,7 +4,6 @@ __author__ = 'Jerry Chan'
 
 import tkinter as tk
 import arrow
-import git_base
 import gitlab_tools
 import log_utils
 import version_tools_cmft as cmft_tools
