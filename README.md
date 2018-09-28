@@ -16,15 +16,15 @@ pip install --upgrade python-gitlab
 ## 操作流程
 1. 登录gitlab,点击个人头像选择setting
 
-  ![](asserts/setting-1.jpg)
+  ![](assets/setting-1.jpg)
 
 2. 选择Access Tokens
 
-  ![](asserts/accesstoken-1.jpg)
+  ![](assets/accesstoken-1.jpg)
 
 3. 设置Access Token
 
-  ![](asserts/accesstoken-2.jpg)
+  ![](assets/accesstoken-2.jpg)
 
 4. 将得到的token在窗口主界面进行设置
 
