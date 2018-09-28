@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Gitlab API接口封装
+"""
 
 __author__ = 'Jerry Chan'
 
@@ -41,23 +44,38 @@ def get_access_token():
 
 # list all the projects that you can see
 def list_all_projects():
-    projects = gl.projects.list(order_by='name', sort='asc', owned=True)
+    projects = gl.projects.list(
+        order_by='name', sort='asc', visibility='private')
     # for project in projects:
     #     logger.info('project detail--->project id:' +
     #                 str(project.attributes['id']) + ',' + 'project-name:' +
     #                 str(project.attributes['name']))
     logger.info('获取项目列表成功！')
-    logger.info(projects)
+    # logger.info(projects)
     return projects
 
 
 # list all the groups
 def list_all_groups():
     all_groups = gl.groups.list()
-    for group in all_groups:
-        logger.info('group detail--->group id:' + group.attributes['id'] +
-                    ',' + 'group-name:' + group.attributes['name'])
+    # for group in all_groups:
+    #     logger.info('group detail--->group id:' + str(group.attributes['id']) +
+    #                 ',' + 'group-name:' + group.attributes['name'] + ',' +
+    #                 'description:' + group.attributes['description'])
+    # logger.info('group info:' + str(group))
     return all_groups
+
+
+# list projects in the group
+def list_projects_in_group(group_id):
+    group = gl.groups.get(group_id)
+    projects = group.projects.list()
+    # for project in projects:
+    #     logger.info('project detail--->project id:' +
+    #                 str(project.attributes['id']) + ',' + 'project-name:' +
+    #                 str(project.attributes['name']))
+    logger.info('获取项目列表成功！')
+    return projects
 
 
 # Get a project by ID
@@ -144,18 +162,19 @@ def delete_branch(project_id, branch_name):
 
 def test():
     print('====================test====================')
-    list_all_projects()
+    # list_all_projects()
 
     # list_all_groups()
+    # list_projects_in_group(717)
 
-    # branches = get_branches_names_by_project_id(1174)
+    # branches = get_branches_names_by_project_id(51)
     # print(branches)
 
     # project_info = get_project_by_id(1174)
     # project_id,project_name = get_project_name(project_info)
     # print(project_id,',',project_name)
 
-    # protect_branch(1174, 'release')
+    # protect_branch(51, 'dev_20181018')
     # unprotect_branch(1174, 'release')
 
     # branch = create_branch(1174, 'dev_20180920')

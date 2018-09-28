@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+窗口程序，程序主入口
+"""
 
 __author__ = 'Jerry Chan'
 
@@ -11,6 +14,7 @@ import version_tools_cmft as cmft_tools
 logger = log_utils.get_logger()
 DEFAULT_ACCESS_TOKEN = '请点击设置access token'
 DEFAILT_PROJECT_NAME = '请点击选择项目进行管理'
+DEFAILT_GROUP_NAME = '请点击选择项目团队'
 
 
 # main window
@@ -27,6 +31,8 @@ class RootWindow(tk.Tk):
             self, text=DEFAULT_ACCESS_TOKEN, relief=tk.GROOVE, width=30)
         self.choose_project_label = tk.Label(
             self, text=DEFAILT_PROJECT_NAME, relief=tk.GROOVE, width=30)
+        self.choose_group_label = tk.Label(
+            self, text=DEFAILT_GROUP_NAME, relief=tk.GROOVE, width=30)
 
         access_token = gitlab_tools.get_access_token()
         if access_token != None and access_token != '':
@@ -70,37 +76,44 @@ class RootWindow(tk.Tk):
             row=2, column=1, padx=5, pady=5, sticky=tk.W)
 
         tk.Label(
-            self, text='项目名：').grid(
+            self, text='项目团队:').grid(
                 row=3, column=0, padx=5, pady=5, sticky=tk.W)
+        self.choose_group_label.bind('<Button-1>', self.setup_group)
+        self.choose_group_label.grid(
+            row=3, column=1, padx=5, pady=5, sticky=tk.W)
+
+        tk.Label(
+            self, text='项目名：').grid(
+                row=4, column=0, padx=5, pady=5, sticky=tk.W)
         # choose_project_label = tk.Label(
         #     self, text='请点击选择项目进行管理', relief=tk.GROOVE, width=30)
         self.choose_project_label.bind('<Button-1>', self.setup_projects)
         self.choose_project_label.grid(
-            row=3, column=1, padx=5, pady=5, sticky=tk.W)
+            row=4, column=1, padx=5, pady=5, sticky=tk.W)
 
         create_next_branch_button = tk.Button(self, text="一键创建下周版本", width=15)
         create_next_branch_button.bind('<Button-1>', self.auto_create_branch)
-        create_next_branch_button.grid(row=4, column=1, pady=5, sticky=tk.W)
+        create_next_branch_button.grid(row=5, column=1, pady=5, sticky=tk.W)
 
         tk.Label(
             self, text='版本冻结:').grid(
-                row=5, column=0, padx=5, pady=5, sticky=tk.W)
+                row=6, column=0, padx=5, pady=5, sticky=tk.W)
 
         self.branch_label = tk.Label(
             self, text='请点击选择需要冻结的版本', relief=tk.GROOVE, width=30)
         self.branch_label.bind('<Button-1>', self.setup_freeze_branch)
-        self.branch_label.grid(row=5, column=1, padx=5, pady=5, sticky=tk.W)
+        self.branch_label.grid(row=6, column=1, padx=5, pady=5, sticky=tk.W)
 
         freeze_version_button = tk.Button(self, text="冻结所选版本", width=15)
         freeze_version_button.bind('<Button-1>', self.freeze_version)
-        freeze_version_button.grid(row=6, column=1, pady=5, sticky=tk.W)
+        freeze_version_button.grid(row=7, column=1, pady=5, sticky=tk.W)
 
         tk.Label(
             self, text='结果:').grid(
-                row=7, column=0, columnspan=2, sticky=tk.W)
+                row=8, column=0, columnspan=2, sticky=tk.W)
 
         self.text_area = tk.Text(self, background='grey')
-        self.text_area.grid(row=8, column=0, columnspan=3)
+        self.text_area.grid(row=9, column=0, columnspan=3)
 
     # 一键创建下周分支
     def auto_create_branch(self, event):
@@ -167,6 +180,20 @@ class RootWindow(tk.Tk):
         gitlab_tools.set_access_token(access_token)
         self.display_log_content_on_terminal()
 
+    # set group
+    def set_group(self, event):
+        group_dialog = GroupsDialog(self)
+        self.wait_window(group_dialog)
+        self.display_log_content_on_terminal()
+        return group_dialog.group_name
+
+    def setup_group(self, event):
+        group_name = self.set_group(self)
+        if group_name is None:
+            return
+        self.choose_group_label.config(text=group_name)
+        self.display_log_content_on_terminal()
+
     # set projects
     def set_projects(self, event):
         project_name_dialog = ProjectsDialog(self)
@@ -211,6 +238,55 @@ class AccessTokenDialog(tk.Toplevel):
         self.destroy()
 
 
+class GroupsDialog(tk.Toplevel):
+    def __init__(self, root_window):
+        super().__init__()
+        self.title('选择项目团队')
+        self.root_window = root_window
+        # 弹窗界面
+        self.setup_ui()
+
+    def setup_ui(self):
+        row1 = tk.Frame(self)
+        row1.pack(fill="x")
+        # 加载项目列表
+        groups = gitlab_tools.list_all_groups()
+
+        tk.Label(row1, text='项目团队信息').pack(side=tk.TOP)
+        self.group_name = tk.StringVar()
+
+        row2 = tk.Frame(self)
+        row2.pack(fill="y")
+        for group in groups:
+            label_display_value = str(group.attributes['id']) + ':' + str(
+                group.attributes['name'])
+            radio_button_display_name = group.attributes[
+                'name'] + ' ' + group.attributes['description']
+            tk.Radiobutton(
+                row2,
+                variable=self.group_name,
+                text=radio_button_display_name,
+                value=str(label_display_value),
+                padx=10,
+                pady=5).pack(anchor=tk.W)
+
+        self.group_name.set(
+            str(groups[0].attributes['id']) + ':' +
+            str(groups[0].attributes['name']))
+        row3 = tk.Frame(self)
+        row3.pack(fill="x")
+        tk.Button(row3, text="取消", command=self.cancel).pack(side=tk.RIGHT)
+        tk.Button(row3, text="确定", command=self.ok).pack(side=tk.RIGHT)
+
+    def ok(self):
+        self.group_name = self.group_name.get()
+        self.destroy()
+
+    def cancel(self):
+        self.group_name = None
+        self.destroy()
+
+
 class ProjectsDialog(tk.Toplevel):
     def __init__(self, root_window):
         super().__init__()
@@ -223,8 +299,11 @@ class ProjectsDialog(tk.Toplevel):
         row1 = tk.Frame(self)
         row1.pack(fill="x")
 
+        group_info = str(self.root_window.choose_group_label.cget('text'))
+        group_id = group_info.split(':')[0]
+
         # 加载项目列表
-        projects = gitlab_tools.list_all_projects()
+        projects = gitlab_tools.list_projects_in_group(group_id)
 
         tk.Label(row1, text='项目名称').pack(side=tk.TOP)
         self.project_name = tk.StringVar()

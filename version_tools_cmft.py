@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+版本控制封装工具
+"""
 
 __author__ = 'Jerry Chan'
 
@@ -106,7 +109,7 @@ def check_branch_exist(branch_name, stdout):
         index = result_str.index(branch_name)
         return True
     except Exception as e:
-        logger.info('分支不存在，可以进行创建', e)
+        logger.info('分支不存在，可以进行创建' + str(e))
         return False
 
 

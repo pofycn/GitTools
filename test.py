@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+测试脚本
+"""
+
 __author__ = 'Jerry Chan'
 
 import subprocess
@@ -11,17 +15,12 @@ import gitlab_tools
 
 
 def main():
+    print('=========================测试=========================')
     # log_utils.clear_log_content()
 
     # arw = arrow.utcnow()
     # next_arw=arw.shift(weekday=3).format('YYYYMMDD')
     # print(next_arw)
-
-    # path1: /Users/pofy/Documents/projects_py/GitTools
-    # path2: /Users/pofy/Documents/projects/shop-app
-    print('=========================测试=========================')
-    # print(cmft_tools.check_branch_exist('master', stdout))
-    # print(cmft_tools.get_lastest_branch(stdout))
     
     # current_time = arrow.get("2018-09-21 11:30", "YYYY-MM-DD HH:mm")
     # weekday = current_time.format('ddd')

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+封装日志工具
+"""
+
 __author__ = 'Jerry Chan'
 
 import logging
