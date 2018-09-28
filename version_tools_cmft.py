@@ -83,7 +83,7 @@ def create_next_week_branch(project_id):
         gitlab_tools.create_branch(project_id, next_release_branch,
                                    release_remote)
     except Exception as e:
-        logger.info('创建下周分支过程出错' + e)
+        logger.info('创建下周分支过程出错' + str(e))
 
 
 # 根据stdout获取当前分支
@@ -148,7 +148,7 @@ def get_lastest_branch(branch_name_list):
         return remote_dev_array[counts_remote_dev - 1], remote_release_array[
             counts_remote_release - 1]
     except Exception as e:
-        logger.info('查看最新版本分支错误')
+        logger.info('查看最新版本分支错误' + str(e))
         return -1
 
 
