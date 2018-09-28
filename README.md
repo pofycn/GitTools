@@ -34,32 +34,31 @@ pip install --upgrade python-gitlab
 
 ![image-20180928155214221](assets/image-20180928155214221.png)
 
-5. 选择项目
+6. 选择项目
 
 ![image-20180928155305035](assets/image-20180928155305035.png)
 
-6. 点击确认选择项目
+7. 点击确认选择项目
 
 ![image-20180928155334494](assets/image-20180928155334494.png)
 
-7. 点击一键创建下周分支
+8. 点击一键创建下周分支
 
 ![image-20180928155500312](assets/image-20180928155500312.png)
 
 
-
-10. 点击冻结所选版本：
+9. 点击冻结所选版本：
 
 ![image-20180928155634814](assets/image-20180928155634814.png)
 
-11. 完成
+10. 完成
 
 ## 注意事项
-此工具主要提供给项目管理员master使用，使用时请注意生成了正确的Access Token
+此工具主要提供给项目管理员Master使用，使用时请注意生成了正确的Access Token，同时需要注意的是：能够查看到项目团队的项目信息的用户有可能因为不是Master所以会出现创建分支失败以及冻结分支失败的情况，请知悉。
 
 ## 启动
 ```
-git clone http://git.dev.cmrh.com/chenn001/GitTools.git
+git clone <git repo url>>
 
 cd GitTools
 
