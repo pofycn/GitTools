@@ -24,7 +24,7 @@ logger = log_utils.get_logger()
 
 # 创建下周分支
 def create_next_week_branch(project_id):
-    print('准备创建下周分支')
+    logger.info('准备创建下周分支')
     try:
         now = arrow.utcnow()
         current_branch_trans_time = now.format('YYYYMMDD')
@@ -105,11 +105,11 @@ def check_branch_exist(branch_name, stdout):
         for str in str_array:
             if (str != ''):
                 result_str = result_str + re.sub('\s', '', str) + ','
-        print('分支已存在，请检出')
+        logger.info('分支已存在，请检出')
         index = result_str.index(branch_name)
         return True
     except Exception as e:
-        print('分支不存在，可以进行创建', e)
+        logger.info('分支不存在，可以进行创建', e)
         return False
 
 

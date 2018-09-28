@@ -21,21 +21,24 @@ class RootWindow(tk.Tk):
         super().__init__()
         self.title('CMFT Git Tools')
         self.resizable(False, False)
+        # 重置日志信息
+        log_utils.clear_log_content()
+
         self.access_token_label = tk.Label(
             self, text=DEFAULT_ACCESS_TOKEN, relief=tk.GROOVE, width=30)
         self.choose_project_label = tk.Label(
             self, text=DEFAILT_PROJECT_NAME, relief=tk.GROOVE, width=30)
 
         access_token = gitlab_tools.get_access_token()
-        if access_token != None or access_token != '':
+        if access_token != None and access_token != '':
             gitlab_tools.set_access_token(access_token)
             self.access_token_label.config(text=access_token)
         else:
             logger.info('授权失败，请重新设置access token')
             self.access_token_label.config(text='授权失败，请重新设置access token')
-
-        # 程序界面
+        # 初始化程序界面
         self.setup_ui()
+        self.display_log_content_on_terminal()
 
     def setup_ui(self):
         # head icon
@@ -102,21 +105,19 @@ class RootWindow(tk.Tk):
 
     # 一键创建下周分支
     def auto_create_branch(self, event):
-        log_utils.clear_log_content()
         # 获取选择的项目id
         project_info = str(self.choose_project_label.cget('text'))
         project_id = project_info.split(':')[0]
 
         # 创建下周分支
         cmft_tools.create_next_week_branch(project_id)
+        self.display_log_content_on_terminal()
 
+    # 在text area显示日志信息
+    def display_log_content_on_terminal(self):
         logs_content = log_utils.read_logs()
-
         self.clear_text_area()
-
         self.append_text_to_text_area(logs_content)
-        # 清空日志信息
-        log_utils.clear_log_content()
 
     # 清空text_area信息
     def clear_text_area(self):
@@ -136,6 +137,7 @@ class RootWindow(tk.Tk):
     def list_branch_name(self, event):
         branch_list_dialog = branchListDialog(self)
         self.wait_window(branch_list_dialog)
+        self.display_log_content_on_terminal()
         return branch_list_dialog.branch_name
 
     # 执行冻结版本操作
@@ -146,25 +148,31 @@ class RootWindow(tk.Tk):
         branch_name = str(self.branch_label.cget('text'))
         logger.info('准备冻结' + project_name + '项目的' + branch_name + '分支')
         gitlab_tools.protect_branch(project_id, branch_name)
+        self.display_log_content_on_terminal()
 
     # set access token
     def set_access_token(self, event):
         access_token_dialog = AccessTokenDialog()
         self.wait_window(access_token_dialog)
+        self.display_log_content_on_terminal()
         return access_token_dialog.accesstoken
 
     # set access token to label
     def setup_accesstoken(self, event):
         access_token = self.set_access_token(self)
         if access_token is None:
+            logger.info('授权失败！')
             return
+        logger.info('授权成功！')
         self.access_token_label.config(text=access_token)
         gitlab_tools.set_access_token(access_token)
+        self.display_log_content_on_terminal()
 
     # set projects
     def set_projects(self, event):
-        project_name_dialog = ProjectsDialog()
+        project_name_dialog = ProjectsDialog(self)
         self.wait_window(project_name_dialog)
+        self.display_log_content_on_terminal()
         return project_name_dialog.project_name
 
     def setup_projects(self, event):
@@ -172,6 +180,7 @@ class RootWindow(tk.Tk):
         if project_name is None:
             return
         self.choose_project_label.config(text=project_name)
+        self.display_log_content_on_terminal()
 
 
 class AccessTokenDialog(tk.Toplevel):
@@ -204,9 +213,10 @@ class AccessTokenDialog(tk.Toplevel):
 
 
 class ProjectsDialog(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, root_window):
         super().__init__()
         self.title('选择项目')
+        self.root_window = root_window
         # 弹窗界面
         self.setup_ui()
 
@@ -265,7 +275,7 @@ class branchListDialog(tk.Toplevel):
         project_id = project_info.split(':')[0]
         # 确认project id是否为空
         if (project_id == None and project_id == DEFAILT_PROJECT_NAME):
-            print('项目名错误！', project_id)
+            logger.info('项目名错误！' + project_id)
             return
         # 加载项目所有分支
         branch_name_list = gitlab_tools.get_branches_names_by_project_id(

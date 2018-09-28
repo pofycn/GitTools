@@ -28,7 +28,7 @@ def set_access_token(access_token):
         logger.info('授权成功！')
         return gl
     except Exception as e:
-        logger.info('Exception' + str(e))
+        logger.info('授权失败！Exception' + str(e))
 
 
 # get access token
@@ -46,6 +46,8 @@ def list_all_projects():
     #     logger.info('project detail--->project id:' +
     #                 str(project.attributes['id']) + ',' + 'project-name:' +
     #                 str(project.attributes['name']))
+    logger.info('获取项目列表成功！')
+    logger.info(projects)
     return projects
 
 
