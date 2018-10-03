@@ -64,3 +64,12 @@ cd GitTools
 
 python main_window.py
 ```
+## 打包
+```
+pyinstaller -F -i resource/icon.icns -w main_window.py -p gitlab_tools.py -p log_utils.py -p version_tools_cmft.py --hidden-import gitlab_tools --hidden-import log_utils --hidden-import version_tools_cmft
+```
+
+## 清理打包内容
+```
+rm -rf build dist main_window.spec
+```
